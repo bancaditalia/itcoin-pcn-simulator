@@ -1,0 +1,62 @@
+{
+    "layer_nodes": {
+        "layer1": {
+            "weight": 10000
+        },
+        "layer2": {
+            "weight": 1000
+        },
+        "layer3B": {
+            "weight": 1
+        },
+        "layer3U": {
+            "weight": 1
+        },
+        "layer3Msmall": {
+            "weight": 1
+        },
+        "layer3Mmedium": {
+            "weight": 1
+        },
+        "layer3Mlarge": {
+            "weight": 1
+        }
+    },
+    "subnetworks": {
+        "[1<channel>1]": {
+            "capacity" : "50000M",
+            "weight": 1
+        },
+        "[2<channel>2]": {
+            "capacity" : "500M",
+            "weight": {
+                "national": 10,
+                "international": 1
+            }
+        },
+        "[1<channel>2]": {
+            "capacity" : "1000M",
+            "weight": 100
+        },
+        "[3<channel>3]": {
+            "capacity": "500k",
+            "enabled": false
+        },
+        "[2<channel>3B]": {
+            "capacity": "300k",
+            "weight": 100
+        },
+        "[2<channel>3Msmall]": {
+            "capacity": "500k",
+            "weight": 100
+        },
+        "[2<channel>3Mmedium]": {
+            "capacity": "5M",
+            "weight": 100
+        },
+        "[2<channel>3Mlarge]": {
+            "capacity": "50M",
+            "weight": 100
+        }
+    }
+}

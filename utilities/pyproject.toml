@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "python-utils"
+version = "0.1.0"
+description = "Python utils needed to build topologies and analyze simulation results."
+authors = [
+    "Sara Giammusso <sara.giammusso@bancaditalia.it>"
+]
+maintainers = [
+    "Sara Giammusso <sara.giammusso@bancaditalia.it>",
+    "Marco Favorito <marco.favorito@bancaditalia.it>",
+    "Antonio Muci <antonio.muci@bancaditalia.it>"
+]
+license = "MIT"
+homepage = "https://github.com/bancaditalia/itcoin-pcn-simulator/utilities"
+repository = "https://github.com/bancaditalia/itcoin-pcn-simulator/"
+keywords = ["itcoin", "cloth"]
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.11',
+    'Topic :: Scientific/Engineering'
+]
+packages = [
+    { include = "statistics_analyzer/**/*.py" } 
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/bancaditalia/cloth/issues"
+"Pull Requests" = "https://github.com/bancaditalia/cloth/pulls"
+
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+matplotlib = "^3.8.0"
+pandas = "^2.1.2"
+scipy = "^1.11.3"
+seaborn = "^0.13.0"
+jupyter = "^1.0.0"
+networkx = "^3.3"
+metis = "^0.2a5"
+numpy = "^1.26.4"
+
+[tool.poetry.group.dev.dependencies]
+black = "24.4.2"
+mypy = "1.10.0"
+pandas-stubs = "^2.2.1.240316"
+ruff = "0.4.4"
+types-seaborn = "^0.13.2.20240417"
