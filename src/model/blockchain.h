@@ -19,9 +19,14 @@ struct blockchain_tx {
   long originator;
 };
 
+struct block {
+  double confirmation_time;
+  struct array* transactions; // Array of blockchain_tx
+};
+
 struct blockchain {
   struct array* mempool;
-  struct array* blocks; // Array of arrays of blockchain_tx
+  struct array* blocks; // Array of block
 };
 
 // Event functions
