@@ -18,9 +18,14 @@ typedef struct blockchain_tx {
   long originator;
 } blockchain_tx;
 
+typedef struct block {
+  double confirmation_time;
+  struct array* transactions; // Array of blockchain_tx
+} block;
+
 typedef struct blockchain {
   struct array* mempool;
-  struct array* blocks; // Array of arrays of blockchain_tx
+  struct array* blocks; // Array of block
 } blockchain;
 
 // Event functions
