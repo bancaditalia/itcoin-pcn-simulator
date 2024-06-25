@@ -43,7 +43,9 @@ void blockchain_forward(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
       debug_blockchain_forward(node_out_file, lp, in_msg);
 
       // Allocate the block
-      struct array* next_block = array_initialize(block_size);
+      struct block* next_block = malloc(sizeof(struct block));
+      next_block->confirmation_time = tw_now(lp);
+      next_block->transactions = array_initialize(block_size);
 
       // Available block size depends on the congestion rate
       int block_period = 100;
@@ -56,7 +58,7 @@ void blockchain_forward(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
       int available_block_size = transactions_x_block_int + 1*(next_block_number_in_period<transactions_x_block_rem);
 
       // Take transactions from the mempool, add them to block
-      while(array_len(s->mempool) && array_len(next_block)<available_block_size) {
+      while(array_len(s->mempool) && array_len(next_block->transactions)<available_block_size) {
         // Get the first transaction from the mempool
         blockchain_tx* tx = array_get(s->mempool, 0);
 
@@ -64,7 +66,7 @@ void blockchain_forward(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
         array_delete_element_nofree(s->mempool, 0);
 
         // Add transaction to the block
-        next_block = array_insert(next_block, tx);
+        next_block->transactions = array_insert(next_block->transactions, tx);
 
         // Notify lps involved in the block transactions about the block
         // Notify the sender
@@ -111,12 +113,12 @@ void blockchain_reverse(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
   switch (in_msg->type) {
     case TICK_TOCK_NEXT_BLOCK:
       // Take the latest added block
-      struct array* latest_block = array_get(s->blocks, array_len(s->blocks)-1);
+      struct block* latest_block = array_get(s->blocks, array_len(s->blocks)-1);
 
       // Take transactions from the blocks, add them to the mempool
-      while ( array_len(latest_block) ) {
-        blockchain_tx* tx = array_get(latest_block, array_len(latest_block)-1);
-        array_delete_element_nofree(latest_block, array_len(latest_block)-1);
+      while ( array_len(latest_block->transactions) ) {
+        blockchain_tx* tx = array_get(latest_block->transactions, array_len(latest_block->transactions)-1);
+        array_delete_element_nofree(latest_block->transactions, array_len(latest_block->transactions)-1);
         s->mempool = array_insert(s->mempool, tx);
       }
 
@@ -160,8 +162,8 @@ void blockchain_final(blockchain *s, tw_lp *lp) {
 
   // Deallocate blocks
   for (int i=0; i<array_len(s->blocks); i++) {
-    struct array* block = array_get(s->blocks, i);
-    array_delete_all(block);
+    struct block* block = array_get(s->blocks, i);
+    array_free(block->transactions);
   }
   array_free(s->blocks);
 }
