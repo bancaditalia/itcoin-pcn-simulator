@@ -227,6 +227,7 @@ struct network* generate_network_from_files(char nodes_filename[256], char chann
     }
     node = new_node(id, label, node_type, SMALL, country_string2enum(label_country));
     node->custodian_id = custodian_id;
+    node->lsp_id = custodian_id; // For now the custodian and the LSP are the same entity
     node->partition = force_single_partition ? 0 : partition;
     network->nodes = array_insert(network->nodes, node);
 
