@@ -282,7 +282,7 @@ void model_final (node *s, tw_lp *lp){
   struct element *iterator;
   if(!pe_header_written++) {
     // Check for payments awaiting expired withdrawals
-    // Temporarily here, this should become a WITHDRAWALFAIL event sent from the intermediary to the end user
+    // Temporarily here, this should become a WITHDRAWALFAIL event sent from the custodian_id to the end user
     for(uint32_t i=0; i<array_len(network->nodes); i++){
       struct node* node = array_get(network->nodes, i);
       // Here shall we check if we have expired payments awaiting withdrawals

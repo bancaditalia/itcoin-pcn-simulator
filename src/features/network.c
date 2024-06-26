@@ -201,11 +201,11 @@ struct network* generate_network_from_files(char nodes_filename[256], char chann
   }
 
   while(fgets(row, 2048, nodes_file)!=NULL) {
-    long intermediary=-1;
+    long custodian_id=-1;
     char label[MAXNODELABELSIZE] = "\0";
     char label_country[COUNTRYLABELSIZE] = "\0";
     int partition=-1;
-    sscanf(row, "%ld,%30[^,],%30[^,],%d,%ld", &id, label, label_country, &partition,&intermediary);
+    sscanf(row, "%ld,%30[^,],%30[^,],%d,%ld", &id, label, label_country, &partition,&custodian_id);
 
     enum node_type node_type;
     if(strlen(label) > 2 && !strncmp(label, "CB", 2)){
@@ -226,7 +226,7 @@ struct network* generate_network_from_files(char nodes_filename[256], char chann
       exit(-1);
     }
     node = new_node(id, label, node_type, SMALL, country_string2enum(label_country));
-    node->intermediary = intermediary;
+    node->custodian_id = custodian_id;
     node->partition = force_single_partition ? 0 : partition;
     network->nodes = array_insert(network->nodes, node);
 

@@ -216,8 +216,8 @@ struct array * find_path(router_state *router_state, struct payment *payment, ui
   }
   src = array_get(network->nodes, payment->sender);
   dest = array_get(network->nodes, payment->receiver);
-  sender_custodian = src->intermediary;
-  dest_custodian = dest->intermediary;
+  sender_custodian = src->custodian_id;
+  dest_custodian = dest->custodian_id;
 
   if (use_known_paths && payment->attempts==1 && sender_custodian != -1 && dest_custodian != -1){
     // Create the key "src-target"
@@ -574,7 +574,7 @@ void notify_payment(tw_lp *lp, payment* payment) {
   // Deposit at least node_wcap/3
   amount_d = amount_d > node_wcap/3 ? amount_d : node_wcap/3;
   // Create deposit
-  struct payment* deposit_to_forward = new_payment( node->id, node->intermediary, amount_d, tw_now(lp), DEPOSIT);
+  struct payment* deposit_to_forward = new_payment( node->id, node->custodian_id, amount_d, tw_now(lp), DEPOSIT);
   // Forward the FINDPATH event
   // Here we would like to simulate a RTT between the user and its custodian, to ask and receive for a deposit invoice (200 + 2*RAND), plus the time to create the findpath event (10)
   tw_event *next_e = tw_event_new(deposit_to_forward->sender, 10 + 2*tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
