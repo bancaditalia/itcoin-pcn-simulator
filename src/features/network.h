@@ -82,7 +82,7 @@ struct node_list_element {
 struct node {
   long id;
   char* label;
-  long intermediary;
+  long custodian_id;
   struct array* open_edges;
   struct element *results;
   unsigned int explored;
