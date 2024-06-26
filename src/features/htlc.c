@@ -203,7 +203,7 @@ struct array * find_path(struct router_state *router_state, struct payment *paym
   struct array *path;
   enum pathfind_error error;
   struct node* src, *dest;
-  long sender_custodian, dest_custodian;
+  long sender_lsp, dest_lsp;
   char key[256];
   struct array* precomputed_hops;
   int precomputed_hops_len;
@@ -218,18 +218,18 @@ struct array * find_path(struct router_state *router_state, struct payment *paym
   }
   src = array_get(network->nodes, payment->sender);
   dest = array_get(network->nodes, payment->receiver);
-  sender_custodian = src->custodian_id;
-  dest_custodian = dest->custodian_id;
+  sender_lsp = src->lsp_id;
+  dest_lsp = dest->lsp_id;
 
-  if (use_known_paths && payment->attempts==1 && sender_custodian != -1 && dest_custodian != -1){
+  if (use_known_paths && payment->attempts==1 && sender_lsp != -1 && dest_lsp != -1){
     // Create the key "src-target"
-    snprintf(key, sizeof(key), "%ld-%ld", sender_custodian, dest_custodian);
+    snprintf(key, sizeof(key), "%ld-%ld", sender_lsp, dest_lsp); // Search for a precomputed path from sender LSP to receiver LSP
     precomputed_hops = hash_table_get(path_table, key);
     precomputed_hops_len = precomputed_hops != NULL ? array_len(precomputed_hops) : 0;
     path = array_initialize(precomputed_hops_len + 2);
     first_hop = (struct path_hop *)malloc(sizeof(struct path_hop));
-    first_hop->sender = payment->sender;
-    first_hop->receiver = sender_custodian;
+    first_hop->sender = payment->sender; // First hop of the payment is from sender to its own LSP
+    first_hop->receiver = sender_lsp;
     edge = array_get(src->open_edges, 0);
     first_hop->edge = edge->id;
     path = array_insert(path, first_hop);
@@ -242,7 +242,7 @@ struct array * find_path(struct router_state *router_state, struct payment *paym
       path = array_insert(path, new_hop);
     }
     last_hop = (struct path_hop *)malloc(sizeof(struct path_hop));
-    last_hop->sender = dest_custodian;
+    last_hop->sender = dest_lsp; // Last hop of the payment is from receiver's LSP to receiver
     last_hop->receiver = payment->receiver;
     edge =  array_get(dest->open_edges, 0);
     last_hop->edge = edge->counter_edge_id;
