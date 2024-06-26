@@ -82,7 +82,11 @@ struct node_list_element {
 struct node {
   long id;
   char* label;
+
+  // Custodian and Lightning Service Provider (LSP) can be two different entities
   long custodian_id;
+  long lsp_id;
+
   struct array* open_edges;
   struct element *results;
   unsigned int explored;
