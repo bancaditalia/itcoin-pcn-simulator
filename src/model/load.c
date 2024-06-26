@@ -504,14 +504,14 @@ void generate_next_random_payment(node *sender, tw_bf *bf, message *in_msg, tw_l
     pmt_to_forward = new_payment(sender->custodian_id, sender->id, amount_w, tw_now(lp), WITHDRAWAL);
     // Create the postponed payment
     struct payment* postponed_payment = new_payment(sender->id, receiver->id, amount, tw_now(lp), TX);
-    postponed_payment->last_hop_id = receiver->custodian_id;
+    postponed_payment->last_hop_id = receiver->lsp_id; // The last hop of a payment should be from the LSP to the receiver
     // Append the original payment to the pending payments list of the sender
     sender->rw_awaiting_payment = postponed_payment;
     sender->rw_withdrawal_id = pmt_to_forward->id;
   }
   else {
     pmt_to_forward = new_payment(sender->id, receiver->id, amount, tw_now(lp), TX);
-    pmt_to_forward->last_hop_id=receiver->custodian_id;
+    pmt_to_forward->last_hop_id=receiver->lsp_id; // The last hop of a payment should be from the LSP to the receiver
   }
   // We log here the msg receive because it's the first place where we know the payment to forward id
   debug_node_generate_forward(node_out_file, lp, in_msg, pmt_to_forward->id);
