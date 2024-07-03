@@ -3,6 +3,7 @@
 from enum import Enum
 from pathlib import Path
 
+from experiments_runner import RebalancingMode, run_all_simulations
 from plasma_network_generator.commands.generate_all import (
     DEFAULT_FRACTION_OF_UNBANKED_RETAIL_USERS,
 )
@@ -30,6 +31,18 @@ def setup_topology_directories(topology_type: TopologyType) -> tuple[Path, Path]
     topologies_dir = MY_DIR / "topologies" / topology_type.value
     topologies_dir.mkdir(parents=True, exist_ok=True)
     return cloth_root_dir, topologies_dir
+
+
+def setup_result_directories(
+    experiment_nb: int, topology_type: TopologyType
+) -> tuple[Path, Path]:
+    """
+    Set up and return the necessary result directory paths.
+    """
+    results_dir = MY_DIR / "results" / f"exp-{experiment_nb}" / topology_type.value
+    results_dir.mkdir(parents=True, exist_ok=True)
+    results_file = results_dir / "results.csv"
+    return results_dir, results_file
 
 
 def generate_topologies(
@@ -69,7 +82,7 @@ def generate_topologies(
         topology_generate(topgen_args)
 
 
-def main() -> None:
+def run_experiment_1() -> None:
     seeds = [
         7,
         13,
@@ -101,6 +114,38 @@ def main() -> None:
     for topology_type in TopologyType:
         cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
         generate_topologies(topologies_dir, seeds, capacities, topology_type)
+    # Run experiments
+    # Experiment 1 (Plot 1...2)
+    for topology_type in TopologyType:
+        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        results_dir, results_file = setup_result_directories(1, topology_type)
+        results = run_all_simulations(
+            cloth_root_dir=cloth_root_dir,
+            topologies_dir=topologies_dir,
+            results_dir=results_dir,
+            results_file=results_file,
+            block_congestion_rates=0,
+            block_sizes=4,
+            capacities=capacities,
+            num_processess=4,
+            seeds=seeds,
+            simulation_ends=86400000,
+            submarine_swap_thresholds=0.9,
+            rebalancing=[
+                RebalancingMode.NONE,
+                RebalancingMode.REV,
+                RebalancingMode.FULL,
+            ],
+            use_known_paths=1,
+            syncs="5 --max-opt-lookahead=100 --batch=1",
+            tpss=2,
+            tps_cfgs=None,
+            cleanup=False,
+        )
+
+
+def main() -> None:
+    run_experiment_1()
 
 
 if __name__ == "__main__":
