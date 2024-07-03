@@ -102,6 +102,7 @@ class RndModel:
     p_large_merchants: float
     unique_cb: bool
     nations: NationSpecs
+    scale_free_2_2: bool
 
     def asdict(self) -> dict:
         """Get a dictionary representation of the random model parameters."""
@@ -142,6 +143,7 @@ class RndModel:
             "p_large_merchants": self.p_large_merchants,
             "unique_cb": self.unique_cb,
             "nations": self.nations,
+            "scale_free_2_2": self.scale_free_2_2,
         }
 
     @property
@@ -276,6 +278,7 @@ class RndModel:
         p_large_merchants: float | None,
         unique_cb: bool,
         nations: NationSpecs,
+        scale_free_2_2: bool,
     ) -> "RndModel":
         """Initialize the random model parameters from command line arguments using the legacy arg parser."""
         legacy_args_dict = {
@@ -296,6 +299,7 @@ class RndModel:
             "p_large_merchants": p_large_merchants,
             "unique_cb": unique_cb,
             "nations": nations,
+            "scale_free_2_2": scale_free_2_2,
         }
         # remove entries with none values
         legacy_args_dict = {k: v for k, v in legacy_args_dict.items() if v is not None}
@@ -706,6 +710,7 @@ def parse_size_spec(raw_args: argparse.Namespace) -> RndModel:
         p_large_merchants=raw_args.p_large_merchants,
         unique_cb=raw_args.unique_cb,
         nations=nation_spec,
+        scale_free_2_2=raw_args.scale_free,
     )
     assert not rnd_model.unique_cb or rnd_model.number_of_CBs_in_simulation == 1, (
         "the unique CB flag is not consistent with the provided or inferred number of CBs"
