@@ -69,6 +69,7 @@ from plasma_network_generator.utils import (
 DEFAULT_OUTPUT_DIR = Path("output")
 DEFAULT_RANDOM_SEED: int | None = 42
 DEFAULT_FRACTION_OF_UNBANKED_RETAIL_USERS: float = 0.0
+DEFAULT_SCALE_FREE_2_2: bool = False
 
 
 @dataclasses.dataclass(frozen=True)
@@ -91,6 +92,7 @@ class Args:
     capacity_fractions: Sequence[float]
     nations: NationSpecs
     seed: int | None = None
+    scale_free_2_2: bool = False
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
@@ -213,6 +215,13 @@ def get_parser() -> argparse.ArgumentParser:
         help="the capacity fractions to use (default: 0.0 0.1 0.2 ... 1.0)",
         nargs="+",
     )
+    parser.add_argument(
+        "-sf",
+        "--scale-free-2-2",
+        type=bool,
+        help=f"force layer 2 subnetwork to be scale free (default: {DEFAULT_SCALE_FREE_2_2})",
+        default=DEFAULT_SCALE_FREE_2_2,
+    )
     return parser
 
 
@@ -246,6 +255,7 @@ def parse_args() -> Args:
         capacity_fractions=raw_args.capacity_fractions,
         nations=nations,
         seed=raw_args.seed,
+        scale_free_2_2=raw_args.scale_free_2_2,
     )
 
 
@@ -336,6 +346,7 @@ def _do_job(args: Args) -> None:
         p_large_merchants=args.p_large_merchants,
         unique_cb=False,
         nations=args.nations,
+        scale_free_2_2=args.scale_free_2_2,
     )
     logging.info(
         "********** calling networkx generator using model params file %s **********",

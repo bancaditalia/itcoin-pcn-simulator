@@ -132,7 +132,9 @@ def payment_subnetworks_random_models(rnd_model_params):
             "network": {
                 "type": "MultiDiGraph",
                 "ekey": "l2.l2.{id}",
-                "model": (
+                "model": (rnd.scale_free, {})
+                if rnd_model_params["scale_free_2_2"]
+                else (
                     rnd.watts_strogatz,
                     {"k": utils.Δ("i2i_k") > 4, "p": utils.Δ("i2i_p") > 0.1},
                 ),
