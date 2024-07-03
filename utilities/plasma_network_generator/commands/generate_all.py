@@ -69,6 +69,7 @@ class Args:
     model_params_file: Path
     output_dir: Path
     nb_partitions: Sequence[int]
+    nb_cb: int
     nb_intermediaries: int
     nb_retail: int
     nb_merchants: int
@@ -223,6 +224,7 @@ def parse_args() -> Args:
         model_params_file=raw_args.model_params_file.resolve(),
         output_dir=raw_args.output_dir.resolve(),
         nb_partitions=tuple(raw_args.nb_partitions),
+        nb_cb=nb_cb,
         nb_intermediaries=nb_intermediaries,
         nb_retail=nb_retail,
         nb_merchants=nb_merchants,
@@ -307,7 +309,7 @@ def _do_job(args: Args) -> None:
     networkx_generator_output_dir = args.output_dir / "generator_output"
     rnd_model = RndModel.initialize_from_cli_args(
         number_of_nodes_in_simulation=None,
-        number_of_CBs_in_simulation=1,
+        number_of_CBs_in_simulation=args.nb_cb,
         number_of_intermediaries_in_simulation=args.nb_intermediaries,
         number_of_retail_users_in_simulation=args.nb_retail,
         number_of_merchants_in_simulation=args.nb_merchants,
