@@ -66,6 +66,7 @@ def run_pcn_simulation(
     waterfall: Literal[0, 1],
     reverse_waterfall: Literal[0, 1],
     submarine_swaps: Literal[0, 1],
+    use_known_path: Literal[0, 1],
     simulation_log_file: str,
     sync: int,
     num_processes: int,
@@ -100,6 +101,7 @@ def run_pcn_simulation(
       --output-dir={output_dir} \\
       --synch={sync} --extramem=400000 \\
       --waterfall={waterfall} --reverse-waterfall={reverse_waterfall} \\
+      --use-known-paths={use_known_path} \\
       --submarine-swaps={submarine_swaps} \\
       --end={simulation_end} \\
       {f"--tps={tps}" if tps_flag else f"--tps-cfg={tps_cfg}"} \\
@@ -154,6 +156,7 @@ def run_pcn_simulation(
         "waterfall": waterfall,
         "reverse_waterfall": reverse_waterfall,
         "submarine_swaps": submarine_swaps,
+        "use_known_path": use_known_path,
         "sync": sync,
         # Simulation results
         "success": float(str(cloth_output["Success"]["Mean"])[:6]),
@@ -208,6 +211,7 @@ def run_all_simulations(
     simulation_ends: int | list[int],
     submarine_swap_thresholds: float | list[float],
     rebalancing: RebalancingMode | list[RebalancingMode],
+    use_known_paths: Literal[0, 1] | list[Literal[0, 1]],
     syncs: int | list[int],
     tpss: int | list[int] | None,
     tps_cfgs: pathlib.Path | list[pathlib.Path] | None,
@@ -238,6 +242,9 @@ def run_all_simulations(
         else [submarine_swap_thresholds]
     )
     rebalancing = rebalancing if isinstance(rebalancing, list) else [rebalancing]
+    use_known_paths = (
+        use_known_paths if isinstance(use_known_paths, list) else [use_known_paths]
+    )
     syncs = syncs if isinstance(syncs, list) else [syncs]
     # The following code fixes a potential bug: we can't simply pass "None" to
     # itertools.product(): its arguments must all be iterables.
@@ -271,6 +278,7 @@ def run_all_simulations(
         simulation_end,
         submarine_swap_threshold,
         rebalancing_mode,
+        use_known_path,
         sync,
         tps,
         tps_cfg,
@@ -283,12 +291,13 @@ def run_all_simulations(
         simulation_ends,
         submarine_swap_thresholds,
         rebalancing,
+        use_known_paths,
         syncs,
         tpss_iterable,
         tps_cfgs_iterable,
     ):
         # Define the simulation string
-        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {rebalancing_mode.value=}, {tps=}, {tps_cfg=}, {sync=}"
+        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {rebalancing_mode.value=}, {use_known_path=}, {tps=}, {tps_cfg=}, {sync=}"
 
         waterfall, reverse_waterfall, submarine_swaps = select_rebalancing_mode(
             rebalancing_mode
@@ -305,6 +314,7 @@ def run_all_simulations(
             & (results["waterfall"] == waterfall)
             & (results["reverse_waterfall"] == reverse_waterfall)
             & (results["submarine_swaps"] == submarine_swaps)
+            & (results["use_known_path"] == use_known_path)
             & (
                 (results["tps_cfg"] == tps_cfg)
                 if tps_cfg is not None
@@ -332,6 +342,7 @@ def run_all_simulations(
             waterfall=waterfall,
             reverse_waterfall=reverse_waterfall,
             submarine_swaps=submarine_swaps,
+            use_known_path=use_known_path,
             simulation_log_file=simulation_log_file,
             sync=sync,
             num_processes=num_processes,
