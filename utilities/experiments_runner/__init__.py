@@ -7,13 +7,25 @@ from datetime import datetime
 from typing import Any
 import random
 import string
-
+from enum import Enum
 import numpy as np
 import pandas as pd
 
 from statistics_analyzer.commands.analyzer import Args as Statistics_analyzer_args
 from statistics_analyzer.commands.analyzer import _execute as statistics_analyze
 
+class RebalancingMode(Enum):
+    FULL = 'Full'
+    REV = 'Rev'
+    NONE = 'None'
+
+def select_rebalancing_mode(rebalancing_mode: RebalancingMode) -> Tuple[int, int, int]:
+    if rebalancing_mode == RebalancingMode.FULL:
+        return 1, 1, 1
+    elif rebalancing_mode == RebalancingMode.REV:
+        return 1, 1, 0
+    elif rebalancing_mode == RebalancingMode.NONE:
+        return 0, 0, 0
 
 def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file):
     for f in output_dir.glob("node_logs_file_*.txt"):
@@ -43,6 +55,9 @@ def run_pcn_simulation(
     block_size,
     block_congestion_rate,
     submarine_swap_threshold,
+    waterfall,
+    reverse_waterfall,
+    submarine_swaps,
     simulation_log_file,
     sync: int,
     num_processes: int,
@@ -76,9 +91,8 @@ def run_pcn_simulation(
       --input-dir={input_dir} \\
       --output-dir={output_dir} \\
       --synch={sync} --extramem=400000 \\
-      --waterfall=1 --reverse-waterfall=1 \\
-      --use-known-paths=1 \\
-      --submarine-swaps=1 \\
+      --waterfall={waterfall} --reverse-waterfall={reverse_waterfall} \\
+      --submarine-swaps={submarine_swaps} \\
       --end={simulation_end} \\
       {f"--tps={tps}" if tps_flag else f"--tps-cfg={tps_cfg}"} \\
       --block-size={block_size} \\
@@ -129,6 +143,9 @@ def run_pcn_simulation(
         "tps": tps,
         "tps_cfg" : str(tps_cfg),
         "submarine_swap_threshold": submarine_swap_threshold,
+        "waterfall": waterfall,
+        "reverse_waterfall": reverse_waterfall,
+        "submarine_swaps": submarine_swaps,
         "sync": sync,
 
         # Simulation results
@@ -183,6 +200,7 @@ def run_all_simulations(
     seeds,
     simulation_ends,
     submarine_swap_thresholds,
+    rebalancing,
     syncs,
     tpss,
     tps_cfgs
@@ -199,16 +217,19 @@ def run_all_simulations(
     seeds = seeds if type(seeds) is list else [seeds]
     simulation_ends = simulation_ends if type(simulation_ends) is list else [simulation_ends]
     submarine_swap_thresholds = submarine_swap_thresholds if type(submarine_swap_thresholds) is list else [submarine_swap_thresholds]
+    rebalancing = rebalancing if type(rebalancing) is list else [rebalancing]
     syncs = syncs if type(syncs) is list else [syncs]
     tpss = tpss if type(tpss) is list else [tpss]
     tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
 
-    for block_congestion_rate, block_size, capacity, num_processes, seed, simulation_end, submarine_swap_threshold, sync, tps, tps_cfg in itertools.product(
-            block_congestion_rates, block_sizes, capacities, num_processess, seeds, simulation_ends, submarine_swap_thresholds, syncs, tpss, tps_cfgs
+    for block_congestion_rate, block_size, capacity, num_processes, seed, simulation_end, submarine_swap_threshold, rebalancing_mode, sync, tps, tps_cfg in itertools.product(
+            block_congestion_rates, block_sizes, capacities, num_processess, seeds, simulation_ends, submarine_swap_thresholds,rebalancing, syncs, tpss, tps_cfgs
         ):
 
         # Define the simulation string
-        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {tps=}, {tps_cfg=}, {sync=}"
+        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {rebalancing_mode.value=}, {tps=}, {tps_cfg=}, {sync=}"
+
+        waterfall, reverse_waterfall, submarine_swaps = select_rebalancing_mode(rebalancing_mode)
 
         if (not results.empty) and (
             (results['block_congestion_rate'] == block_congestion_rate)
@@ -218,6 +239,9 @@ def run_all_simulations(
             & (results['seed'] == seed)
             & (results['simulation_end'] == simulation_end)
             & (results['submarine_swap_threshold'] == submarine_swap_threshold)
+            & (results['waterfall'] == waterfall)
+            & (results['reverse_waterfall'] == reverse_waterfall)
+            & (results['submarine_swaps'] == submarine_swaps)
             & ( (results['tps_cfg'] == tps_cfg) if tps_cfg is not None else (results['tps'] == tps) )
             & (results['sync'] == sync)
         ).any():
@@ -239,6 +263,9 @@ def run_all_simulations(
             block_size = block_size,
             block_congestion_rate = block_congestion_rate,
             submarine_swap_threshold = submarine_swap_threshold,
+            waterfall = waterfall,
+            reverse_waterfall = reverse_waterfall,
+            submarine_swaps = submarine_swaps,
             simulation_log_file = simulation_log_file,
             sync = sync,
             num_processes = num_processes,
