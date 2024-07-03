@@ -210,6 +210,7 @@ def run_all_simulations(
     syncs: int | list[int],
     tpss: int | list[int] | None,
     tps_cfgs: pathlib.Path | list[pathlib.Path] | None,
+    cleanup: bool,
 ) -> pd.DataFrame:
     # Read existing experiments
     results = pd.DataFrame()
@@ -328,7 +329,7 @@ def run_all_simulations(
             simulation_log_file=simulation_log_file,
             sync=sync,
             num_processes=num_processes,
-            cleanup=True,
+            cleanup=cleanup,
             verbose=False,
         )
 
