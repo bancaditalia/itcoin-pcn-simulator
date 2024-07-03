@@ -17,6 +17,14 @@ def clique(g, edge_key_template, rnd_model_params, *_number_of_nodes):
     _update_rekeying_edges(g, c, edge_key_template)
 
 
+# A scale-free subnetwork model
+def scale_free(G, edge_key_template, rnd_model_params, *_number_of_nodes):
+    number_of_nodes = sum(_number_of_nodes)
+    sf = nx.scale_free_graph(number_of_nodes, seed=rnd_model_params["rnd_seed"])
+    sf.remove_edges_from(nx.selfloop_edges(sf))
+    _update_rekeying_edges(G, sf, edge_key_template)
+
+
 # A typical small-world subnetwork model
 def watts_strogatz(g, edge_key_template, rnd_model_params, *_number_of_nodes):
     number_of_nodes = sum(_number_of_nodes)
