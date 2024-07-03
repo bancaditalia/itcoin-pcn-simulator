@@ -171,7 +171,10 @@ class RndModel:
     def cb_count_by_nation_name(self) -> dict:
         """Get a dictionary mapping nation names to the CB count."""
         return {
-            nation_id: 0 if self.unique_cb else 1 for nation_id in self.nations.nations
+            nation_id: 0
+            if self.unique_cb or self.number_of_CBs_in_simulation == 0
+            else 1
+            for nation_id in self.nations.nations
         }
 
     def count_by_nation_name(self, total_n: int) -> dict[str, int]:
@@ -469,7 +472,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--nb-cb",
-        type=integer_in_human_format,
+        type=check_nonnegative_integer,
         help="the number of CBs",
         default=None,
     )
