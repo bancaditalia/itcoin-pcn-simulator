@@ -59,6 +59,7 @@ def run_pcn_simulation(
     waterfall,
     reverse_waterfall,
     submarine_swaps,
+    use_known_path,
     simulation_log_file,
     sync: int,
     num_processes: int,
@@ -93,6 +94,7 @@ def run_pcn_simulation(
       --output-dir={output_dir} \\
       --synch={sync} --extramem=400000 \\
       --waterfall={waterfall} --reverse-waterfall={reverse_waterfall} \\
+      --use-known-paths={use_known_path} \\
       --submarine-swaps={submarine_swaps} \\
       --end={simulation_end} \\
       {f"--tps={tps}" if tps_flag else f"--tps-cfg={tps_cfg}"} \\
@@ -147,6 +149,7 @@ def run_pcn_simulation(
         "waterfall": waterfall,
         "reverse_waterfall": reverse_waterfall,
         "submarine_swaps": submarine_swaps,
+        "use_known_path": use_known_path,
         "sync": sync,
 
         # Simulation results
@@ -202,6 +205,7 @@ def run_all_simulations(
     simulation_ends,
     submarine_swap_thresholds,
     rebalancing,
+    use_known_paths,
     syncs,
     tpss,
     tps_cfgs,
@@ -220,6 +224,7 @@ def run_all_simulations(
     simulation_ends = simulation_ends if type(simulation_ends) is list else [simulation_ends]
     submarine_swap_thresholds = submarine_swap_thresholds if type(submarine_swap_thresholds) is list else [submarine_swap_thresholds]
     rebalancing = rebalancing if type(rebalancing) is list else [rebalancing]
+    use_known_paths = use_known_paths if type(use_known_paths) is list else [use_known_paths]
     syncs = syncs if type(syncs) is list else [syncs]
     tpss = tpss if type(tpss) is list else [tpss]
     tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
@@ -227,12 +232,12 @@ def run_all_simulations(
     max_nb_digits = max(map(nb_digits_after_comma, capacities))
     capacities_formatted = [fraction_format_str(cap, max_nb_digits) for cap in capacities]
 
-    for block_congestion_rate, block_size, capacity, num_processes, seed, simulation_end, submarine_swap_threshold, rebalancing_mode, sync, tps, tps_cfg in itertools.product(
-            block_congestion_rates, block_sizes, capacities_formatted, num_processess, seeds, simulation_ends, submarine_swap_thresholds,rebalancing, syncs, tpss, tps_cfgs
+    for block_congestion_rate, block_size, capacity, num_processes, seed, simulation_end, submarine_swap_threshold, rebalancing_mode, use_known_path, sync, tps, tps_cfg in itertools.product(
+            block_congestion_rates, block_sizes, capacities_formatted, num_processess, seeds, simulation_ends, submarine_swap_thresholds,rebalancing, use_known_paths, syncs, tpss, tps_cfgs
         ):
 
         # Define the simulation string
-        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {rebalancing_mode.value=}, {tps=}, {tps_cfg=}, {sync=}"
+        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {rebalancing_mode.value=}, {use_known_path=}, {tps=}, {tps_cfg=}, {sync=}"
 
         waterfall, reverse_waterfall, submarine_swaps = select_rebalancing_mode(rebalancing_mode)
         if (not results.empty) and (
@@ -246,6 +251,7 @@ def run_all_simulations(
             & (results['waterfall'] == waterfall)
             & (results['reverse_waterfall'] == reverse_waterfall)
             & (results['submarine_swaps'] == submarine_swaps)
+            & (results['use_known_path'] == use_known_path)
             & ( (results['tps_cfg'] == tps_cfg) if tps_cfg is not None else (results['tps'] == tps) )
             & (results['sync'] == sync)
         ).any():
@@ -270,6 +276,7 @@ def run_all_simulations(
             waterfall = waterfall,
             reverse_waterfall = reverse_waterfall,
             submarine_swaps = submarine_swaps,
+            use_known_path = use_known_path,
             simulation_log_file = simulation_log_file,
             sync = sync,
             num_processes = num_processes,
