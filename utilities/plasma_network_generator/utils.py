@@ -255,7 +255,7 @@ def network_size_string(s: str) -> tuple[int, int, int, int]:
     try:
         sizes = s.split()
         assert len(sizes) == 4, "the network size string must be of 4 integers"
-        human_format_sizes = map(integer_in_human_format, sizes)
+        human_format_sizes = map(check_nonnegative_integer, sizes)
         return tuple(human_format_sizes)  # type: ignore
     except AssertionError as e:
         msg = f"{s} is not a valid network size string: {e}"

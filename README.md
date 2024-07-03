@@ -68,7 +68,7 @@ To generate network topologies, follow these steps:
     python plasma_network_generator/commands/generate_all.py \
         -k 1 2 4 \
         --seed 42 \
-        --size "3 30 30k 3k" \
+        --size "3 30 30000 3000" \
         --nations "IT,FI,CY" \
         --capacity-fractions 0.5 1 \
         --model-params-file "plasma_network_generator/defaultModelParams.json" \
