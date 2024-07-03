@@ -50,8 +50,14 @@ def infer_missing_rnd_model_params(rnd_model_params):
             [lambda v: v(0) - v(1) - v(2) - v(3), lambda v: int(v(3) * v(8))],
         ),
         5: ("citizens_to_intermediary_ratio", [lambda v: v(3) / v(2)]),
-        6: ("intermediary_to_CB_ratio", [lambda v: v(2) / v(1)]),
-        7: ("citizens_to_CB_ratio", [lambda v: v(3) / v(1)]),
+        6: (
+            "intermediary_to_CB_ratio",
+            [lambda v: v(2) / v(1) if v(1) > 0 else float("nan")],
+        ),
+        7: (
+            "citizens_to_CB_ratio",
+            [lambda v: v(3) / v(1) if v(1) > 0 else float("nan")],
+        ),
         8: ("merchants_to_retail_users_ratio", [lambda v: v(4) / v(3)]),
         9: ("number_of_banked_retail_users_in_simulation", [lambda v: v(3) - v(10)]),
         10: (
