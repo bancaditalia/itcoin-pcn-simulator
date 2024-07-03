@@ -11,6 +11,7 @@ from typing import Literal, assert_never
 import numpy as np
 import pandas as pd
 
+from plasma_network_generator.utils import fraction_format_str, nb_digits_after_comma
 from statistics_analyzer.commands.analyzer import Args as Statistics_analyzer_args
 from statistics_analyzer.commands.analyzer import _execute as statistics_analyze
 
@@ -55,7 +56,7 @@ def run_pcn_simulation(
     topologies_dir: pathlib.Path,
     results_dir: pathlib.Path,
     seed: int,
-    capacity: float,
+    capacity: str,
     simulation_end: int,
     tps: int | None,
     tps_cfg: pathlib.Path | None,
@@ -241,6 +242,11 @@ def run_all_simulations(
     tpss = tpss if type(tpss) is list else [tpss]
     tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
 
+    max_nb_digits = max(map(nb_digits_after_comma, capacities))
+    capacities_formatted = [
+        fraction_format_str(cap, max_nb_digits) for cap in capacities
+    ]
+
     for (
         block_congestion_rate,
         block_size,
@@ -256,7 +262,7 @@ def run_all_simulations(
     ) in itertools.product(
         block_congestion_rates,
         block_sizes,
-        capacities,
+        capacities_formatted,
         num_processess,
         seeds,
         simulation_ends,
@@ -276,7 +282,7 @@ def run_all_simulations(
         if (not results.empty) and (
             (results["block_congestion_rate"] == block_congestion_rate)
             & (results["block_size"] == block_size)
-            & (results["capacity"] == capacity)
+            & (results["capacity"] == float(capacity))
             & (results["num_processes"] == num_processes)
             & (results["seed"] == seed)
             & (results["simulation_end"] == simulation_end)
