@@ -1,8 +1,8 @@
-from enum import Enum
-from typing import List
-import pandas as pd
-import numpy as np
 import os
+from enum import Enum
+
+import numpy as np
+import pandas as pd
 
 
 class COLS(str, Enum):
@@ -55,7 +55,7 @@ def _add_swap_latencies_to_blockchain_df(blockchain_df: pd.DataFrame) -> pd.Data
 
 def get_swap_latencies_from_blockchain_output(
     blockchain_output: str | os.PathLike,
-) -> List:
+) -> list:
     blockchain_df = _df_from_blockchain_output(blockchain_output)
     blockchain_df_with_latencies = _add_swap_latencies_to_blockchain_df(blockchain_df)
     return blockchain_df_with_latencies[COLS.SWAP_LATENCY].to_list()

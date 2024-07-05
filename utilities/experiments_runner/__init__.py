@@ -3,6 +3,7 @@ import json
 import os
 import pathlib
 import random
+import re
 import string
 import subprocess
 from datetime import datetime
@@ -256,7 +257,23 @@ def run_all_simulations(
     tpss = tpss if type(tpss) is list else [tpss]
     tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
 
-    max_nb_digits = max(map(nb_digits_after_comma, capacities))
+    # Calculate the max_nb_digits in topologies_dir
+    a_seed = seeds[0]
+    a_topologies_seed_dir = pathlib.PosixPath(
+        os.path.abspath(os.path.join(topologies_dir, f"seed_{a_seed}"))
+    )
+    capacities_in_a_topologies_seed_dir = [
+        float(
+            re.search(
+                r"capacity-([0-9]*\.[0-9]*)",
+                os.path.basename(os.path.normpath(str(f))),
+                re.IGNORECASE,
+            ).group(1)
+        )
+        for f in a_topologies_seed_dir.iterdir()
+        if f.is_dir()
+    ]
+    max_nb_digits = max(map(nb_digits_after_comma, capacities_in_a_topologies_seed_dir))
     capacities_formatted = [
         fraction_format_str(cap, max_nb_digits) for cap in capacities
     ]
