@@ -2,6 +2,7 @@ import itertools
 import json
 import pathlib
 import random
+import re
 import string
 import subprocess
 from datetime import datetime
@@ -264,7 +265,22 @@ def run_all_simulations(
         else [tps_cfgs]
     )
 
-    max_nb_digits = max(map(nb_digits_after_comma, capacities))
+    # Calculate the max_nb_digits in topologies_dir
+    a_seed = seeds[0]
+    a_topologies_seed_dir = topologies_dir / f"seed_{a_seed}"
+    capacities_in_a_topologies_seed_dir: list[float] = []
+    for f in a_topologies_seed_dir.iterdir():
+        if not f.is_dir():
+            continue
+        match = re.search(
+            r"capacity-([0-9]*\.[0-9]*)",
+            f.name,
+            re.IGNORECASE,
+        )
+        if match is None:
+            continue
+        capacities_in_a_topologies_seed_dir.append(float(match.group(1)))
+    max_nb_digits = max(map(nb_digits_after_comma, capacities_in_a_topologies_seed_dir))
     capacities_formatted = [
         fraction_format_str(cap, max_nb_digits) for cap in capacities
     ]
