@@ -144,6 +144,51 @@ def run_experiment_1() -> None:
         )
 
 
+def run_experiment_2() -> None:
+    seeds = [
+        7,
+        13,
+        23,
+        42,
+        45,
+    ]
+    capacities = [
+        0.00100,
+        0.00200,
+        0.00500,
+    ]
+    # Topology generation
+    for topology_type in TopologyType:
+        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        generate_topologies(
+            cloth_root_dir, topologies_dir, seeds, capacities, topology_type
+        )
+    # Run experiments
+    # Experiment 2 (Plot 3)
+    for topology_type in TopologyType:
+        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        results_dir, results_file = setup_result_directories(2, topology_type)
+        results = run_all_simulations(
+            cloth_root_dir=cloth_root_dir,
+            topologies_dir=topologies_dir,
+            results_dir=results_dir,
+            results_file=results_file,
+            block_congestion_rates=0,
+            block_sizes=4,
+            capacities=capacities,
+            num_processess=4,
+            seeds=seeds,
+            simulation_ends=86400000,
+            submarine_swap_thresholds=0.9,
+            rebalancing=[RebalancingMode.FULL],
+            use_known_paths=1,
+            syncs="5 --max-opt-lookahead=100 --batch=1",
+            tpss=None,
+            tps_cfgs=MY_DIR / "PCN_load.txt",
+            cleanup=False,
+        )
+
+
 def main() -> None:
     run_experiment_1()
 
