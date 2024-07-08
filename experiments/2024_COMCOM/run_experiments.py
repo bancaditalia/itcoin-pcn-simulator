@@ -13,13 +13,13 @@ class TopologyType(Enum):
     SH_PCN = 'SH_PCN'
     SF_PCN = 'SF_PCN'
 
-def setup_topology_directories(topology_type: TopologyType) -> Tuple[Path, Path]:
+def setup_topology_directories(dir_name: str, topology_type: TopologyType) -> Tuple[Path, Path]:
     """
     Set up and return the necessary topology directory paths.
     """
     cloth_root_dir = Path.cwd().parent.parent
 
-    topologies_dir = cloth_root_dir / f"experiments/2024_COMCOM/topologies/{topology_type.value}"
+    topologies_dir = cloth_root_dir / f"experiments/2024_COMCOM/{dir_name}/{topology_type.value}"
     topologies_dir.mkdir(parents=True, exist_ok=True)
 
     return cloth_root_dir, topologies_dir
@@ -76,13 +76,13 @@ def run_experiment_1():
 
     # Topology generation
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        cloth_root_dir, topologies_dir = setup_topology_directories('topologies', topology_type)
         generate_topologies(cloth_root_dir, topologies_dir, seeds, capacities, topology_type)
 
     # Run experiments
     # Experiment 1 (Plot 1...2)
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        cloth_root_dir, topologies_dir = setup_topology_directories('topologies', topology_type)
         results_dir, results_file = setup_result_directories(1, topology_type)
         results = run_all_simulations(
             cloth_root_dir = cloth_root_dir,
@@ -110,13 +110,13 @@ def run_experiment_2():
 
     # Topology generation
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        cloth_root_dir, topologies_dir = setup_topology_directories('topologies', topology_type)
         generate_topologies(cloth_root_dir, topologies_dir, seeds, capacities, topology_type)
 
     # Run experiments
     # Experiment 2 (Plot 3)
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        cloth_root_dir, topologies_dir = setup_topology_directories('topologies',topology_type)
         results_dir, results_file = setup_result_directories(2, topology_type)
         results = run_all_simulations(
             cloth_root_dir = cloth_root_dir,
