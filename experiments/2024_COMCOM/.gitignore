@@ -1,5 +1,11 @@
 .ipynb_checkpoints
 
 topologies/*
-results/*
+topologies_*/*
+
+results/*/*/*
+!results/exp-1/*/0.0018-FULL
+!results/exp-1/*/0.01-FULL
+!results/*/*/results.csv
+
 plots/*
