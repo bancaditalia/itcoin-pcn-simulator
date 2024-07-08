@@ -9,6 +9,10 @@ from plasma_network_generator.commands.generate_all import (
 )
 from plasma_network_generator.core import select_eurosystem_subset
 
+NB_INTERMEDIARIES=30
+NB_RETAIL=300000
+NB_MERCHANTS=3000
+
 class TopologyType(Enum):
     SH_PCN = 'SH_PCN'
     SF_PCN = 'SF_PCN'
@@ -37,7 +41,7 @@ def setup_result_directories(experiment_nb: int, topology_type: TopologyType) ->
 
     return results_dir, results_file
 
-def generate_topologies(cloth_root_dir: Path, topologies_dir: Path, seeds: List[int], capacities: List[float], topology_type: TopologyType) -> None:
+def generate_topologies(cloth_root_dir: Path, topologies_dir: Path, seeds: List[int], capacities: List[float], topology_type: TopologyType, nb_intermediaries: int, nb_retail: int, nb_merchants: int) -> None:
     """
     Generate topologies for the given seeds and capacities.
     """
@@ -53,9 +57,9 @@ def generate_topologies(cloth_root_dir: Path, topologies_dir: Path, seeds: List[
             seed=seed,
             nations=select_eurosystem_subset(["IT", "CY", "FI"]),
             nb_cb=0 if topology_type == TopologyType.SF_PCN else 3,
-            nb_retail=300000,
-            nb_merchants=3000,
-            nb_intermediaries=30,
+            nb_retail=nb_retail,
+            nb_merchants=nb_merchants,
+            nb_intermediaries=nb_intermediaries,
             capacity_fractions=capacities,
             output_dir=topologies_seed_dir,
             # Other args
@@ -77,7 +81,7 @@ def run_experiment_1():
     # Topology generation
     for topology_type in TopologyType:
         cloth_root_dir, topologies_dir = setup_topology_directories('topologies', topology_type)
-        generate_topologies(cloth_root_dir, topologies_dir, seeds, capacities, topology_type)
+        generate_topologies(cloth_root_dir, topologies_dir, seeds, capacities, topology_type, NB_INTERMEDIARIES, NB_RETAIL, NB_MERCHANTS)
 
     # Run experiments
     # Experiment 1 (Plot 1...2)
@@ -111,7 +115,7 @@ def run_experiment_2():
     # Topology generation
     for topology_type in TopologyType:
         cloth_root_dir, topologies_dir = setup_topology_directories('topologies', topology_type)
-        generate_topologies(cloth_root_dir, topologies_dir, seeds, capacities, topology_type)
+        generate_topologies(cloth_root_dir, topologies_dir, seeds, capacities, topology_type,  NB_INTERMEDIARIES, NB_RETAIL, NB_MERCHANTS)
 
     # Run experiments
     # Experiment 2 (Plot 3)
