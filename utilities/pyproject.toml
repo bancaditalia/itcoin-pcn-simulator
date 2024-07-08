@@ -25,12 +25,12 @@ classifiers = [
     'Topic :: Scientific/Engineering'
 ]
 packages = [
-    { include = "statistics_analyzer/**/*.py" } 
+    { include = "statistics_analyzer/**/*.py" }
 ]
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/bancaditalia/cloth/issues"
-"Pull Requests" = "https://github.com/bancaditalia/cloth/pulls"
+"Bug Tracker" = "https://github.com/bancaditalia/itcoin-pcn-simulator/issues"
+"Pull Requests" = "https://github.com/bancaditalia/itcoin-pcn-simulator/pulls"
 
 
 [tool.poetry.dependencies]
