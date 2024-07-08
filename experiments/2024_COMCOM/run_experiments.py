@@ -16,6 +16,11 @@ from plasma_network_generator.commands.generate_all import (
 from plasma_network_generator.core import select_eurosystem_subset
 
 MY_DIR = Path(__file__).resolve().parent
+REPO_BASEPATH = MY_DIR.parent.parent
+
+NB_INTERMEDIARIES = 30
+NB_RETAIL = 300000
+NB_MERCHANTS = 3000
 
 
 class TopologyType(Enum):
@@ -23,14 +28,13 @@ class TopologyType(Enum):
     SF_PCN = "SF_PCN"
 
 
-def setup_topology_directories(topology_type: TopologyType) -> tuple[Path, Path]:
+def setup_topology_directories(dir_name: str, topology_type: TopologyType) -> Path:
     """
     Set up and return the necessary topology directory paths.
     """
-    cloth_root_dir = MY_DIR.parent.parent
-    topologies_dir = MY_DIR / "topologies" / topology_type.value
+    topologies_dir = MY_DIR / dir_name / topology_type.value
     topologies_dir.mkdir(parents=True, exist_ok=True)
-    return cloth_root_dir, topologies_dir
+    return topologies_dir
 
 
 def setup_result_directories(
@@ -50,6 +54,9 @@ def generate_topologies(
     seeds: list[int],
     capacities: list[float],
     topology_type: TopologyType,
+    nb_intermediaries: int,
+    nb_retail: int,
+    nb_merchants: int,
 ) -> None:
     """
     Generate topologies for the given seeds and capacities.
@@ -65,9 +72,9 @@ def generate_topologies(
             seed=seed,
             nations=select_eurosystem_subset(["IT", "CY", "FI"]),
             nb_cb=0 if topology_type == TopologyType.SF_PCN else 3,
-            nb_retail=300000,
-            nb_merchants=3000,
-            nb_intermediaries=30,
+            nb_retail=nb_retail,
+            nb_merchants=nb_merchants,
+            nb_intermediaries=nb_intermediaries,
             capacity_fractions=capacities,
             output_dir=topologies_seed_dir,
             # Other args
@@ -112,15 +119,23 @@ def run_experiment_1() -> None:
     ]
     # Topology generation
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
-        generate_topologies(topologies_dir, seeds, capacities, topology_type)
+        topologies_dir = setup_topology_directories("topologies", topology_type)
+        generate_topologies(
+            topologies_dir,
+            seeds,
+            capacities,
+            topology_type,
+            NB_INTERMEDIARIES,
+            NB_RETAIL,
+            NB_MERCHANTS,
+        )
     # Run experiments
     # Experiment 1 (Plot 1...2)
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        topologies_dir = setup_topology_directories("topologies", topology_type)
         results_dir, results_file = setup_result_directories(1, topology_type)
         results = run_all_simulations(
-            cloth_root_dir=cloth_root_dir,
+            cloth_root_dir=REPO_BASEPATH,
             topologies_dir=topologies_dir,
             results_dir=results_dir,
             results_file=results_file,
@@ -153,23 +168,30 @@ def run_experiment_2() -> None:
         45,
     ]
     capacities = [
-        0.00100,
-        0.00200,
-        0.00500,
+        0.001,
+        0.002,
+        0.005,
+        0.01,
     ]
     # Topology generation
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        topologies_dir = setup_topology_directories("topologies", topology_type)
         generate_topologies(
-            cloth_root_dir, topologies_dir, seeds, capacities, topology_type
+            topologies_dir,
+            seeds,
+            capacities,
+            topology_type,
+            NB_INTERMEDIARIES,
+            NB_RETAIL,
+            NB_MERCHANTS,
         )
     # Run experiments
     # Experiment 2 (Plot 3)
     for topology_type in TopologyType:
-        cloth_root_dir, topologies_dir = setup_topology_directories(topology_type)
+        topologies_dir = setup_topology_directories("topologies", topology_type)
         results_dir, results_file = setup_result_directories(2, topology_type)
         results = run_all_simulations(
-            cloth_root_dir=cloth_root_dir,
+            cloth_root_dir=REPO_BASEPATH,
             topologies_dir=topologies_dir,
             results_dir=results_dir,
             results_file=results_file,
@@ -189,8 +211,67 @@ def run_experiment_2() -> None:
         )
 
 
+def run_experiment_3() -> None:
+    seeds = [
+        7,
+        13,
+        23,
+        42,
+        45,
+    ]
+    capacities = [
+        0.001,
+        0.002,
+        0.01,
+    ]
+    # Topology generation
+    for topology_type in TopologyType:
+        for i in range(1, 5):
+            topologies_dir = setup_topology_directories(
+                f"topologies_exp3_{i}", topology_type
+            )
+            generate_topologies(
+                topologies_dir,
+                seeds,
+                capacities,
+                topology_type,
+                NB_INTERMEDIARIES * i,
+                NB_RETAIL * i,
+                NB_MERCHANTS * i,
+            )
+    for topology_type in TopologyType:
+        for i in range(1, 5):
+            topologies_dir = setup_topology_directories(
+                f"topologies_exp3_{i}", topology_type
+            )
+            results_dir, results_file = setup_result_directories(
+                3 * 10 ** len(str(i)) + i, topology_type
+            )
+            results = run_all_simulations(
+                cloth_root_dir=REPO_BASEPATH,
+                topologies_dir=topologies_dir,
+                results_dir=results_dir,
+                results_file=results_file,
+                block_congestion_rates=0,
+                block_sizes=4 * i,
+                capacities=capacities,
+                num_processess=4,
+                seeds=seeds,
+                simulation_ends=18000000,
+                submarine_swap_thresholds=0.9,
+                rebalancing=[RebalancingMode.FULL],
+                use_known_paths=1,
+                syncs="5 --max-opt-lookahead=100 --batch=1",
+                tpss=2 * i,
+                tps_cfgs=None,
+                cleanup=False,
+            )
+
+
 def main() -> None:
     run_experiment_1()
+    run_experiment_2()
+    run_experiment_3()
 
 
 if __name__ == "__main__":
