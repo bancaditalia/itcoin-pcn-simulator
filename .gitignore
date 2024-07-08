@@ -54,7 +54,6 @@ Mkfile.old
 dkms.conf
 
 # Output folder
-results
 output_dir
 
 # Generated files
