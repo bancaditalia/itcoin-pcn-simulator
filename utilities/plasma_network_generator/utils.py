@@ -4,6 +4,8 @@ import functools
 import json
 import logging
 import math
+import os
+import pathlib
 import re
 from collections.abc import Callable
 from importlib import metadata
@@ -524,3 +526,14 @@ class SeedGenerator:
         This method does side-effect since it changes the state of the RNG.
         """
         return int(self._rng.integers(0, 2**32 - 1))
+
+
+class TopologyType(str, Enum):
+    SH_PCN = "SH_PCN"
+    SF_PCN = "SF_PCN"
+
+
+def get_topology_dir(topologies_dir, topology_type, seed):
+    return pathlib.PosixPath(
+        os.path.abspath(os.path.join(topologies_dir, {topology_type}, f"seed_{seed}"))
+    )
