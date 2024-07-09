@@ -14,9 +14,9 @@ import pandas as pd
 from typing import Tuple
 from statistics_analyzer.commands.analyzer import Args as Statistics_analyzer_args
 from statistics_analyzer.commands.analyzer import _execute as statistics_analyze
-from plasma_network_generator.utils import (nb_digits_after_comma, fraction_format_str)
+from plasma_network_generator.utils import (TopologyType, get_topology_dir, nb_digits_after_comma, fraction_format_str)
 
-class RebalancingMode(Enum):
+class RebalancingMode(str, Enum):
     FULL = 'Full'
     REV = 'Rev'
     NONE = 'None'
@@ -47,6 +47,7 @@ def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file):
 
 def run_pcn_simulation(
     cloth_root_dir: pathlib.Path,
+    experiment_number: int,
     topologies_dir: pathlib.Path,
     results_dir: pathlib.Path,
     seed: int,
@@ -60,6 +61,7 @@ def run_pcn_simulation(
     waterfall,
     reverse_waterfall,
     submarine_swaps,
+    topology_type: TopologyType,
     use_known_path,
     simulation_log_file,
     sync: int,
@@ -68,11 +70,11 @@ def run_pcn_simulation(
     verbose: bool,
 ):
     # Calculate the input dir
-    topologies_seed_dir = os.path.abspath(os.path.join(topologies_dir,f"seed_{seed}"))
+    topologies_type_and_seed_dir = get_topology_dir(topologies_dir, topology_type, seed)
     capacity_dir_name = f"capacity-{capacity}"
-    input_dir =  os.path.abspath(os.path.join(topologies_seed_dir,f"{capacity_dir_name}/k_0{num_processes}"))
+    input_dir =  os.path.abspath(os.path.join(topologies_type_and_seed_dir,f"{capacity_dir_name}/k_0{num_processes}"))
     if not os.path.exists(input_dir) and num_processes==1:
-        input_dir =  os.path.abspath(os.path.join(topologies_seed_dir,f"{capacity_dir_name}/k_04"))
+        input_dir =  os.path.abspath(os.path.join(topologies_type_and_seed_dir,f"{capacity_dir_name}/k_04"))
 
     # Calculate the output dir
     date_str = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
@@ -137,6 +139,9 @@ def run_pcn_simulation(
     )
 
     simulation_result = {
+        # Experiment
+        "experiment_number": experiment_number,
+
         # Simulation inputs
         "block_congestion_rate": block_congestion_rate,
         "block_size": block_size,
@@ -150,6 +155,7 @@ def run_pcn_simulation(
         "waterfall": waterfall,
         "reverse_waterfall": reverse_waterfall,
         "submarine_swaps": submarine_swaps,
+        "topology_type": topology_type,
         "use_known_path": use_known_path,
         "sync": sync,
 
@@ -194,6 +200,7 @@ def run_pcn_simulation(
 
 def run_all_simulations(
     cloth_root_dir,
+    experiment_number,
     topologies_dir,
     results_dir,
     results_file,
@@ -208,6 +215,7 @@ def run_all_simulations(
     rebalancing,
     use_known_paths,
     syncs,
+    topology_types,
     tpss,
     tps_cfgs,
     cleanup
@@ -227,12 +235,14 @@ def run_all_simulations(
     rebalancing = rebalancing if type(rebalancing) is list else [rebalancing]
     use_known_paths = use_known_paths if type(use_known_paths) is list else [use_known_paths]
     syncs = syncs if type(syncs) is list else [syncs]
+    topology_types = topology_types if type(topology_types) is list else [topology_types]
     tpss = tpss if type(tpss) is list else [tpss]
     tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
 
     # Calculate the max_nb_digits in topologies_dir
+    a_topology_type = topology_types[0]
     a_seed = seeds[0]
-    a_topologies_seed_dir = pathlib.PosixPath( os.path.abspath(os.path.join(topologies_dir, f"seed_{a_seed}")) )
+    a_topologies_seed_dir = get_topology_dir(topologies_dir, a_topology_type, a_seed)
     capacities_in_a_topologies_seed_dir = [
         float(
             re.search('capacity-([0-9]*\.[0-9]*)',
@@ -244,8 +254,8 @@ def run_all_simulations(
     max_nb_digits = max(map(nb_digits_after_comma, capacities_in_a_topologies_seed_dir))
     capacities_formatted = [fraction_format_str(cap, max_nb_digits) for cap in capacities]
 
-    for block_congestion_rate, block_size, capacity, num_processes, seed, simulation_end, submarine_swap_threshold, rebalancing_mode, use_known_path, sync, tps, tps_cfg in itertools.product(
-            block_congestion_rates, block_sizes, capacities_formatted, num_processess, seeds, simulation_ends, submarine_swap_thresholds,rebalancing, use_known_paths, syncs, tpss, tps_cfgs
+    for block_congestion_rate, block_size, capacity, num_processes, seed, simulation_end, submarine_swap_threshold, rebalancing_mode, use_known_path, sync, topology_type, tps, tps_cfg in itertools.product(
+            block_congestion_rates, block_sizes, capacities_formatted, num_processess, seeds, simulation_ends, submarine_swap_thresholds,rebalancing, use_known_paths, syncs, topology_types, tpss, tps_cfgs
         ):
 
         # Define the simulation string
@@ -253,7 +263,8 @@ def run_all_simulations(
 
         waterfall, reverse_waterfall, submarine_swaps = select_rebalancing_mode(rebalancing_mode)
         if (not results.empty) and (
-            (results['block_congestion_rate'] == block_congestion_rate)
+            (results['experiment_number'] == experiment_number)
+            & (results['block_congestion_rate'] == block_congestion_rate)
             & (results['block_size'] == block_size)
             & (results['capacity'] == float(capacity))
             & (results['num_processes'] == num_processes)
@@ -264,6 +275,7 @@ def run_all_simulations(
             & (results['reverse_waterfall'] == reverse_waterfall)
             & (results['submarine_swaps'] == submarine_swaps)
             & (results['use_known_path'] == use_known_path)
+            & (results['topology_type'] == topology_type)
             & ( (results['tps_cfg'] == tps_cfg) if tps_cfg is not None else (results['tps'] == tps) )
             & (results['sync'] == sync)
         ).any():
@@ -275,6 +287,7 @@ def run_all_simulations(
         simulation_log_file = "simulation_log.txt"
         simulation_result = run_pcn_simulation(
             cloth_root_dir = cloth_root_dir,
+            experiment_number = experiment_number,
             topologies_dir = topologies_dir,
             results_dir = results_dir,
             seed = seed,
@@ -291,6 +304,7 @@ def run_all_simulations(
             use_known_path = use_known_path,
             simulation_log_file = simulation_log_file,
             sync = sync,
+            topology_type = topology_type,
             num_processes = num_processes,
             cleanup = cleanup,
             verbose = False
