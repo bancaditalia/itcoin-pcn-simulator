@@ -142,6 +142,41 @@ def run_experiment_2():
             cleanup = False
         )
 
+def run_experiment_3():
+    seeds = [7, 13, 23, 42, 45]
+    capacities = [0.001, 0.002, 0.01]
+
+    # Topology generation
+    for topology_type in TopologyType:
+        for i in range(1, 5):
+            cloth_root_dir, topologies_dir = setup_topology_directories(f'topologies_exp3_{i}', topology_type)
+            generate_topologies(cloth_root_dir, topologies_dir, seeds, capacities, topology_type, NB_INTERMEDIARIES*i, NB_RETAIL*i, NB_MERCHANTS*i)
+
+    for topology_type in TopologyType:
+        for i in range(1, 5):
+            cloth_root_dir, topologies_dir = setup_topology_directories(f'topologies_exp3_{i}',topology_type)
+            results_dir, results_file = setup_result_directories(3 * 10 ** len(str(i)) + i, topology_type)
+            results = run_all_simulations(
+                cloth_root_dir = cloth_root_dir,
+                topologies_dir = topologies_dir,
+                results_dir = results_dir,
+                results_file = results_file,
+                block_congestion_rates = 0,
+                block_sizes = 4*i,
+                capacities = capacities,
+                num_processess = 4,
+                seeds = seeds,
+                simulation_ends = 18000000,
+                submarine_swap_thresholds = 0.9,
+                rebalancing = [RebalancingMode.FULL],
+                use_known_paths = 1,
+                syncs = "5 --max-opt-lookahead=100 --batch=1",
+                tpss = 2 * i,
+                tps_cfgs = None,
+                cleanup = False
+            )
+
+
 def main() -> None:
     run_experiment_1()
 
