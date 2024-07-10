@@ -2,5 +2,8 @@
 
 topologies/*
 topologies_*/*
-results/*
+
+results/*/*/*
+!results/*/*/results.csv
+
 plots/*
