@@ -110,7 +110,7 @@ def run_experiment_1():
 
 def run_experiment_2():
     seeds = [7, 13, 23, 42, 45]
-    capacities = [0.00100, 0.00200, 0.00500]
+    capacities = [0.001, 0.002, 0.005, 0.01]
 
     # Topology generation
     for topology_type in TopologyType:
