@@ -388,6 +388,13 @@ def run_all_simulations(
             verbose=False,
         )
 
+        # Save simulation result
+        simulation_result_filename = "simulation_result.json"
+        with open(
+            os.path.join(results_dir, simulation_result_filename), "w"
+        ) as simulation_result_file:
+            simulation_result_file.write(json.dumps(simulation_result))
+
         results = pd.concat(
             [results, pd.DataFrame([simulation_result])], ignore_index=True
         )
