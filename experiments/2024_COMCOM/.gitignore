@@ -4,6 +4,7 @@ topologies/*
 topologies_*/*
 
 results/*/*/*
+!results/exp-1/*/0.0018-FULL
 !results/*/*/results.csv
 
 plots/*
