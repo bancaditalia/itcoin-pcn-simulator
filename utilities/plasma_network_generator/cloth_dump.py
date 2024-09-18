@@ -209,7 +209,7 @@ def cloth_output(
                         )
 
 
-def plasma_network_generator_cloth_dumb_main(argv) -> int:
+def plasma_network_generator_cloth_dump_main(argv) -> int:
     cmdline_flags = parse_commandline_args(argv)
     configure_logging(True)
     output_dir = pathlib.Path(cmdline_flags["output_dir"]).resolve()
@@ -233,4 +233,4 @@ def plasma_network_generator_cloth_dumb_main(argv) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(plasma_network_generator_cloth_dumb_main(sys.argv))
+    sys.exit(plasma_network_generator_cloth_dump_main(sys.argv))

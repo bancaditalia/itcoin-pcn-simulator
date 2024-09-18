@@ -20,7 +20,7 @@ import networkx as nx
 
 from plasma_network_generator.cloth_dump import (
     cloth_output,
-    plasma_network_generator_cloth_dumb_main,
+    plasma_network_generator_cloth_dump_main,
 )
 from plasma_network_generator.commands.networkx_generator import (
     DEFAULT_NATIONS,
@@ -234,7 +234,7 @@ def parse_args() -> Args:
 
 def call_cloth_dump(input_file: Path, output_dir: Path, n_partitions: int) -> None:
     """Call the cloth dump."""
-    plasma_network_generator_cloth_dumb_main(
+    plasma_network_generator_cloth_dump_main(
         [
             "cloth_dump.py",
             "-input",
