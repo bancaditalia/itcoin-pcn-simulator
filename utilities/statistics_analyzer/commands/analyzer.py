@@ -538,6 +538,7 @@ def _do_job(args: Args, pattern: str) -> None:
         | payments_stats.stats_per_minute
     )
     output_file.write_text(json.dumps(output_data, indent=4))
+    logging.info("Results written in %s", output_file)
 
 
 def _execute(args: Args) -> None:
