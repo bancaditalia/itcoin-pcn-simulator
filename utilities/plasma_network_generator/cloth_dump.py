@@ -4,7 +4,6 @@ import json
 import logging
 import pathlib
 import sys
-from textwrap import dedent
 
 import matplotlib as mpl
 import matplotlib.colors as mcolors
@@ -209,21 +208,8 @@ def cloth_output(
                             plasma_network.nodes[i2]["label"],
                         )
 
-    # save the cloth_input.txt file
-    with (output_dir / "cloth_input.txt").open(mode="w") as cloth_input_file:
-        cloth_input_file.write(
-            dedent(
-                f"""\
-            nodes_filename={output_dir / "plasma_network_nodes.csv"}
-            channels_filename={output_dir / "plasma_network_channels.csv"}
-            edges_filename={output_dir / "plasma_network_edges.csv"}
-            paths_filename={output_dir / "plasma_paths.csv"}
-            """,
-            ),
-        )
 
-
-def plasma_network_generator_cloth_dumb_main(argv) -> int:
+def plasma_network_generator_cloth_dump_main(argv) -> int:
     cmdline_flags = parse_commandline_args(argv)
     configure_logging(True)
     output_dir = pathlib.Path(cmdline_flags["output_dir"]).resolve()
@@ -247,4 +233,4 @@ def plasma_network_generator_cloth_dumb_main(argv) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(plasma_network_generator_cloth_dumb_main(sys.argv))
+    sys.exit(plasma_network_generator_cloth_dump_main(sys.argv))
