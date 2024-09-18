@@ -68,7 +68,7 @@ To generate network topologies, follow these steps:
     * `--end`: simulation end time (default 100000.00)
 
     Additionally, the model accepts these input parameters:
-    * `--cloth-input-file`: path to the CLoTH input file
+    * `--input-dir`: directory containing the files defining the simulation parameters. The simulation parameters are read from the following files: `plasma_network_channels.csv`, `plasma_network_edges.csv`, `plasma_network_nodes.csv`, `plasma_paths.csv`, which can be generated as described above
     * `--output-dir`: output directory where simulation results are stored (must exist)
     * `--tps`: constant load mode (transactions per second)
     * `--tps-config`: variable load mode (configured by a file)
