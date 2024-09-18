@@ -82,13 +82,13 @@ To generate network topologies, follow these steps:
     mkdir -p experiments/workspace/results
 
     OUTDIR="experiments/workspace/results/$(date +"%Y%m%d%H%M%S")"
-    mkdir -p $OUTDIR
+    mkdir -p "${OUTDIR}"
 
     NP=4 && \
     INDIR="experiments/workspace/topologies/seed_42/capacity-0.5/k_0${NP}" && \
     mpirun -np $NP build/itcoin-pcn-simulator \
-        --input-dir=${INDIR} \
-        --output-dir=${OUTDIR} \
+        --input-dir="${INDIR}" \
+        --output-dir="${OUTDIR}" \
         --synch=3 --extramem=400000 \
         --max-opt-lookahead=100 --batch=1 \
         --waterfall=1 --reverse-waterfall=1 \
@@ -103,15 +103,15 @@ To generate network topologies, follow these steps:
 
 ## Analyze results
 
-1. You can calculate statistical about simulation results using the statistics analyzer utility. For example, after executing the following command, you will find the aggregated results in cloth_output.json
+1. You can calculate statistical about simulation results using the statistics analyzer utility. For example, after executing the following command, you will find the aggregated results in `cloth_output.json`
 
     ```bash
     cd ~/itcoin-pcn-simulator/utilities
-    OUTDIR=$OUTDIR poetry shell
+    OUTDIR="${OUTDIR}" poetry shell
 
     python statistics_analyzer/commands/analyzer.py \
-        --input-dir ../$OUTDIR \
-        --output-dir ../$OUTDIR
+        --input-dir ../"${OUTDIR}" \
+        --output-dir ../"${OUTDIR}"
     ```
 
 ## More advances examples
