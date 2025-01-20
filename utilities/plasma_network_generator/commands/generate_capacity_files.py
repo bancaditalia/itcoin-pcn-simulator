@@ -57,7 +57,7 @@ class CapacityRange:
     min: CapacityPointValue
     max: CapacityPointValue
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Check that the range is not empty."""
         if self.min < 0 or self.max < 0:
             msg = "Capacity range cannot be negative."
@@ -91,7 +91,7 @@ class CapacitySpec:
 
     capacity_by_subnetwork: dict[SubnetworkType, CapacityValues]
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Check that the capacity is not negative."""
         unset_subnetworks = set(SubnetworkType) - set(
             self.capacity_by_subnetwork.keys(),
