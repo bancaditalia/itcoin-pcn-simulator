@@ -457,97 +457,97 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--nb-nodes",
-        type=integer_in_human_format,  # type: ignore
+        type=integer_in_human_format,
         help="the number of nodes in the simulation",
         default=None,
     )
     parser.add_argument(
         "--size",
-        type=network_size_string,  # type: ignore
+        type=network_size_string,
         help="the size specification of the network",
         default=None,
     )
     parser.add_argument(
         "--nb-cb",
-        type=integer_in_human_format,  # type: ignore
+        type=integer_in_human_format,
         help="the number of CBs",
         default=None,
     )
     parser.add_argument(
         "--nb-intermediaries",
-        type=integer_in_human_format,  # type: ignore
+        type=integer_in_human_format,
         help="the number of intermediaries",
         default=None,
     )
     parser.add_argument(
         "--nb-retail",
-        type=integer_in_human_format,  # type: ignore
+        type=integer_in_human_format,
         help="the number of retail",
         default=None,
     )
     parser.add_argument(
         "--nb-merchants",
-        type=integer_in_human_format,  # type: ignore
+        type=integer_in_human_format,
         help="the number of merchants",
         default=None,
     )
     parser.add_argument(
         "--citizens-to-intermediary-ratio",
-        type=nonnegative_float,  # type: ignore
+        type=nonnegative_float,
         help="the citizens to intermediary ratio",
         default=None,
     )
     parser.add_argument(
         "--intermediary-to-cb-ratio",
-        type=nonnegative_float,  # type: ignore
+        type=nonnegative_float,
         help="the citizens to intermediary ratio",
         default=None,
     )
     parser.add_argument(
         "--citizens-to-cb-ratio",
-        type=nonnegative_float,  # type: ignore
+        type=nonnegative_float,
         help="the citizens to CB ratio",
         default=None,
     )
     parser.add_argument(
         "--merchants-to-retail-users-ratio",
-        type=nonnegative_float,  # type: ignore
+        type=nonnegative_float,
         help="the merchants to retail users ratio",
         default=None,
     )
     parser.add_argument(
         "--nb-banked-retail-users",
-        type=check_nonnegative_integer,  # type: ignore
+        type=check_nonnegative_integer,
         help="the number of banked retail users",
         default=None,
     )
     parser.add_argument(
         "--nb-unbanked-retail-users",
-        type=check_nonnegative_integer,  # type: ignore
+        type=check_nonnegative_integer,
         help="the number of unbanked retail users",
         default=None,
     )
     parser.add_argument(
         "--fraction-of-unbanked-retail-users",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help="the fraction of unbanked retail users",
         default=None,
     )
     parser.add_argument(
         "--p-small-merchants",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help="the probability of having small merchants",
         default=None,
     )
     parser.add_argument(
         "--p-medium-merchants",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help="the probability of having medium merchants",
         default=None,
     )
     parser.add_argument(
         "--p-large-merchants",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help="the probability of having large merchants",
         default=None,
     )
@@ -591,7 +591,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--deploy_node_count",
-        type=check_positive_integer,  # type: ignore
+        type=check_positive_integer,
         help=f"the (default: {DEFAULT_DEPLOY_NODE_COUNT})",
         default=DEFAULT_DEPLOY_NODE_COUNT,
     )
@@ -600,7 +600,7 @@ def get_parser() -> argparse.ArgumentParser:
     nation_group = parser.add_mutually_exclusive_group()
     nation_group.add_argument(
         "--nations",
-        type=set_of_strings,  # type: ignore
+        type=set_of_strings,
         help="the nations of the generated network",
     )
     nation_group.add_argument(
