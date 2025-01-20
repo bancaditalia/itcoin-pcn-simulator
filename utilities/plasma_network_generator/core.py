@@ -83,7 +83,7 @@ class NationSpec:
             assert re.fullmatch(r"[A-Z]+", name), f"{name} is not a valid nation name"
             assert name != EU_COUNTRY_CODE, "the EU country code is reserved"
             relative_size = float_between_0_and_1(relative_size_str)
-            return cls(name, relative_size)  # type: ignore
+            return cls(name, relative_size)
         except AssertionError as e:
             msg = f"{s} is not a valid nation specification string: {e}"
             raise ValueError(msg) from None

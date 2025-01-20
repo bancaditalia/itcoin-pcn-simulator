@@ -152,31 +152,31 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--size",
-        type=network_size_string,  # type: ignore
+        type=network_size_string,
         help="the size specification of the network (default '1,30,300k,3k')",
         default="1 30 300k 3k",
     )
     parser.add_argument(
         "--fraction-of-unbanked-retail-users",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help=f"the fraction of unbanked retail users (default: {DEFAULT_FRACTION_OF_UNBANKED_RETAIL_USERS})",
         default=DEFAULT_FRACTION_OF_UNBANKED_RETAIL_USERS,
     )
     parser.add_argument(
         "--p-small-merchants",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help="the probability of having small merchants",
         default=0.4,
     )
     parser.add_argument(
         "--p-medium-merchants",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help="the probability of having medium merchants",
         default=0.3,
     )
     parser.add_argument(
         "--p-large-merchants",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         help="the probability of having large merchants",
         default=0.3,
     )
@@ -189,14 +189,14 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--nations",
-        type=set_of_strings,  # type: ignore
+        type=set_of_strings,
         default=None,
         help="the nations of the generated network",
     )
     parser.add_argument(
         "-f",
         "--capacity-fractions",
-        type=float_between_0_and_1,  # type: ignore
+        type=float_between_0_and_1,
         default=[i / 100 for i in range(0, 101, 10)],
         help="the capacity fractions to use (default: 0.0 0.1 0.2 ... 1.0)",
         nargs="+",
