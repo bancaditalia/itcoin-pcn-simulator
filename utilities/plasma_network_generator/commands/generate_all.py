@@ -4,6 +4,9 @@
 import argparse
 import dataclasses
 import logging
+
+# Configure Metis environment variables
+import os
 import pprint
 import sys
 from collections.abc import Sequence
@@ -11,11 +14,8 @@ from pathlib import Path
 from textwrap import dedent, indent
 from typing import cast
 
-# Configure Metis environment variables
-import os
-
 os.environ["METIS_DLL"] = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), f"../../../build/usr/lib/libmetis.so")
+    os.path.join(os.path.dirname(__file__), "../../../build/usr/lib/libmetis.so")
 )
 os.environ["METIS_REALTYPEWIDTH"] = "64"
 os.environ["METIS_IDXTYPEWIDTH"] = "64"

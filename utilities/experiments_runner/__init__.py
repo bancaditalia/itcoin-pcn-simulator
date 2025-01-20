@@ -2,11 +2,11 @@ import itertools
 import json
 import os
 import pathlib
+import random
+import string
 import subprocess
 from datetime import datetime
 from typing import Any
-import random
-import string
 
 import numpy as np
 import pandas as pd
@@ -264,8 +264,7 @@ def run_all_simulations(
         ).any():
             print(f"Skipping {simulation_string}")
             continue
-        else:
-            print(f"Running {simulation_string}")
+        print(f"Running {simulation_string}")
 
         simulation_log_file = "simulation_log.txt"
         simulation_result = run_pcn_simulation(
