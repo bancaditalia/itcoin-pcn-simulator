@@ -5,6 +5,7 @@ target-version = "py311"
 [lint]
 ignore = [
   "E501",    # line too long
+  "ISC001",  # Implicitly concatenated string literals on one line. Incompatible with "ruff format"
   "RET504",  # Unnecessary assignment to {name} before return statement
   "UP015",   # Unnecessary open mode parameters
 ]
