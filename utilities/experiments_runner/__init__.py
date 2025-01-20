@@ -31,6 +31,7 @@ def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file):
     # Remove everything
     # shutil.rmtree(output_dir)
 
+
 def run_pcn_simulation(
     cloth_root_dir: pathlib.Path,
     topologies_dir: pathlib.Path,
@@ -50,16 +51,22 @@ def run_pcn_simulation(
     verbose: bool,
 ):
     # Calculate the input dir
-    topologies_seed_dir = os.path.abspath(os.path.join(topologies_dir,f"seed_{seed}"))
+    topologies_seed_dir = os.path.abspath(os.path.join(topologies_dir, f"seed_{seed}"))
     capacity_dir_name = f"capacity-{capacity}"
-    input_dir =  os.path.abspath(os.path.join(topologies_seed_dir,f"{capacity_dir_name}/k_0{num_processes}"))
-    if not os.path.exists(input_dir) and num_processes==1:
-        input_dir =  os.path.abspath(os.path.join(topologies_seed_dir,f"{capacity_dir_name}/k_04"))
+    input_dir = os.path.abspath(
+        os.path.join(topologies_seed_dir, f"{capacity_dir_name}/k_0{num_processes}")
+    )
+    if not os.path.exists(input_dir) and num_processes == 1:
+        input_dir = os.path.abspath(
+            os.path.join(topologies_seed_dir, f"{capacity_dir_name}/k_04")
+        )
 
     # Calculate the output dir
     date_str = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
-    rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
-    output_dir = pathlib.Path( os.path.abspath(os.path.join(results_dir,f"{date_str}-{rand_str}")) )
+    rand_str = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    output_dir = pathlib.Path(
+        os.path.abspath(os.path.join(results_dir, f"{date_str}-{rand_str}"))
+    )
 
     # Ensure that exactly one between tps and tps_cfg is set
     tps_flag = tps is not None
@@ -123,14 +130,13 @@ def run_pcn_simulation(
         "block_congestion_rate": block_congestion_rate,
         "block_size": block_size,
         "seed": seed,
-        "capacity" : capacity,
-        "num_processes" : num_processes,
+        "capacity": capacity,
+        "num_processes": num_processes,
         "simulation_end": simulation_end,
         "tps": tps,
-        "tps_cfg" : str(tps_cfg),
+        "tps_cfg": str(tps_cfg),
         "submarine_swap_threshold": submarine_swap_threshold,
         "sync": sync,
-
         # Simulation results
         "success": float(str(cloth_output["Success"]["Mean"])[:6]),
         "fail_no_path": cloth_output["FailNoPath"]["Mean"],
@@ -146,14 +152,14 @@ def run_pcn_simulation(
         "total_payments": cloth_output["TotalPayments"],
         "total_deposits": cloth_output["TotalDeposits"],
         "total_withdrawals": cloth_output["TotalWithdrawals"],
-
         "route_length_distr": json.dumps(cloth_output["RouteLengthDistr"]),
-        "transactions_per_minute": json.dumps( cloth_output["TransactionsPerMinute"] ),
-        "success_per_minute": json.dumps( cloth_output["SuccessPerMinute"] ),
-        "deposits_per_minute": json.dumps( cloth_output["DepositsPerMinute"] ),
-        "withdrawals_per_minute": json.dumps( cloth_output["WithdrawalsPerMinute"] ),
-        "submarine_swaps_per_minute": json.dumps( cloth_output["SubmarineSwapsPerMinute"] ),
-
+        "transactions_per_minute": json.dumps(cloth_output["TransactionsPerMinute"]),
+        "success_per_minute": json.dumps(cloth_output["SuccessPerMinute"]),
+        "deposits_per_minute": json.dumps(cloth_output["DepositsPerMinute"]),
+        "withdrawals_per_minute": json.dumps(cloth_output["WithdrawalsPerMinute"]),
+        "submarine_swaps_per_minute": json.dumps(
+            cloth_output["SubmarineSwapsPerMinute"]
+        ),
         "mean_submarine_swaps_per_minute": np.mean(
             np.array(
                 list(cloth_output["SubmarineSwapsPerMinute"].values()), dtype=float
@@ -170,12 +176,12 @@ def run_pcn_simulation(
 
     return simulation_result
 
+
 def run_all_simulations(
     cloth_root_dir,
     topologies_dir,
     results_dir,
     results_file,
-
     block_congestion_rates,
     block_sizes,
     capacities,
@@ -185,41 +191,76 @@ def run_all_simulations(
     submarine_swap_thresholds,
     syncs,
     tpss,
-    tps_cfgs
+    tps_cfgs,
 ):
     # Read existing experiments
     results = pd.DataFrame()
     if os.path.exists(results_file):
         results = pd.read_csv(results_file)
 
-    block_congestion_rates = block_congestion_rates if type(block_congestion_rates) is list else [block_congestion_rates]
+    block_congestion_rates = (
+        block_congestion_rates
+        if type(block_congestion_rates) is list
+        else [block_congestion_rates]
+    )
     block_sizes = block_sizes if type(block_sizes) is list else [block_sizes]
     capacities = capacities if type(capacities) is list else [capacities]
-    num_processess = num_processess if type(num_processess) is list else [num_processess]
+    num_processess = (
+        num_processess if type(num_processess) is list else [num_processess]
+    )
     seeds = seeds if type(seeds) is list else [seeds]
-    simulation_ends = simulation_ends if type(simulation_ends) is list else [simulation_ends]
-    submarine_swap_thresholds = submarine_swap_thresholds if type(submarine_swap_thresholds) is list else [submarine_swap_thresholds]
+    simulation_ends = (
+        simulation_ends if type(simulation_ends) is list else [simulation_ends]
+    )
+    submarine_swap_thresholds = (
+        submarine_swap_thresholds
+        if type(submarine_swap_thresholds) is list
+        else [submarine_swap_thresholds]
+    )
     syncs = syncs if type(syncs) is list else [syncs]
     tpss = tpss if type(tpss) is list else [tpss]
     tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
 
-    for block_congestion_rate, block_size, capacity, num_processes, seed, simulation_end, submarine_swap_threshold, sync, tps, tps_cfg in itertools.product(
-            block_congestion_rates, block_sizes, capacities, num_processess, seeds, simulation_ends, submarine_swap_thresholds, syncs, tpss, tps_cfgs
-        ):
-
+    for (
+        block_congestion_rate,
+        block_size,
+        capacity,
+        num_processes,
+        seed,
+        simulation_end,
+        submarine_swap_threshold,
+        sync,
+        tps,
+        tps_cfg,
+    ) in itertools.product(
+        block_congestion_rates,
+        block_sizes,
+        capacities,
+        num_processess,
+        seeds,
+        simulation_ends,
+        submarine_swap_thresholds,
+        syncs,
+        tpss,
+        tps_cfgs,
+    ):
         # Define the simulation string
         simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {tps=}, {tps_cfg=}, {sync=}"
 
         if (not results.empty) and (
-            (results['block_congestion_rate'] == block_congestion_rate)
-            & (results['block_size'] == block_size)
-            & (results['capacity'] == capacity)
-            & (results['num_processes'] == num_processes)
-            & (results['seed'] == seed)
-            & (results['simulation_end'] == simulation_end)
-            & (results['submarine_swap_threshold'] == submarine_swap_threshold)
-            & ( (results['tps_cfg'] == tps_cfg) if tps_cfg is not None else (results['tps'] == tps) )
-            & (results['sync'] == sync)
+            (results["block_congestion_rate"] == block_congestion_rate)
+            & (results["block_size"] == block_size)
+            & (results["capacity"] == capacity)
+            & (results["num_processes"] == num_processes)
+            & (results["seed"] == seed)
+            & (results["simulation_end"] == simulation_end)
+            & (results["submarine_swap_threshold"] == submarine_swap_threshold)
+            & (
+                (results["tps_cfg"] == tps_cfg)
+                if tps_cfg is not None
+                else (results["tps"] == tps)
+            )
+            & (results["sync"] == sync)
         ).any():
             print(f"Skipping {simulation_string}")
             continue
@@ -228,25 +269,27 @@ def run_all_simulations(
 
         simulation_log_file = "simulation_log.txt"
         simulation_result = run_pcn_simulation(
-            cloth_root_dir = cloth_root_dir,
-            topologies_dir = topologies_dir,
-            results_dir = results_dir,
-            seed = seed,
-            capacity = capacity,
-            simulation_end = simulation_end,
-            tps = tps,
-            tps_cfg = tps_cfg,
-            block_size = block_size,
-            block_congestion_rate = block_congestion_rate,
-            submarine_swap_threshold = submarine_swap_threshold,
-            simulation_log_file = simulation_log_file,
-            sync = sync,
-            num_processes = num_processes,
-            cleanup = True,
-            verbose = False
+            cloth_root_dir=cloth_root_dir,
+            topologies_dir=topologies_dir,
+            results_dir=results_dir,
+            seed=seed,
+            capacity=capacity,
+            simulation_end=simulation_end,
+            tps=tps,
+            tps_cfg=tps_cfg,
+            block_size=block_size,
+            block_congestion_rate=block_congestion_rate,
+            submarine_swap_threshold=submarine_swap_threshold,
+            simulation_log_file=simulation_log_file,
+            sync=sync,
+            num_processes=num_processes,
+            cleanup=True,
+            verbose=False,
         )
 
-        results = pd.concat([results, pd.DataFrame([simulation_result])], ignore_index=True)
+        results = pd.concat(
+            [results, pd.DataFrame([simulation_result])], ignore_index=True
+        )
         results.to_csv(results_file, index=False)
 
     return results

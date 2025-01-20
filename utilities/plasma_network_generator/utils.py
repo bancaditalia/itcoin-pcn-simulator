@@ -49,7 +49,9 @@ def string_to_typed_value(s):
             else (
                 int(s)
                 if string_represents_integer(s)
-                else float(s) if string_represents_float(s) else s
+                else float(s)
+                if string_represents_float(s)
+                else s
             )
         )
     )
@@ -128,7 +130,9 @@ def inject_custom_param_value(model, keypath, value):
         model[key] = (
             int(value)
             if string_represents_integer(value)
-            else float(value) if string_represents_float(value) else value
+            else float(value)
+            if string_represents_float(value)
+            else value
         )
     else:
         inject_custom_param_value(model[key], head_tail[1], value)

@@ -16,7 +16,7 @@ def payment_subnetworks_random_models(rnd_model_params):
             "label": "CB{id}" if rnd_model_params["unique_cb"] else "CB{nation}{id}",
             "color": "blue",
             "country": "",
-            "weight": rnd_model_params['layer_nodes']['layer1']['weight'],
+            "weight": rnd_model_params["layer_nodes"]["layer1"]["weight"],
             "showLabel": True,
         },
         # Nodes in Layer 2: Intermediaries
@@ -26,7 +26,7 @@ def payment_subnetworks_random_models(rnd_model_params):
             "label": "Intermediary{nation}{id}",
             "color": "red",
             "country": "",
-            "weight": rnd_model_params['layer_nodes']['layer2']['weight'],
+            "weight": rnd_model_params["layer_nodes"]["layer2"]["weight"],
             "showLabel": True,
         },
         # Nodes in Layer 3: Retail users
@@ -38,7 +38,7 @@ def payment_subnetworks_random_models(rnd_model_params):
             "color": "dark green",
             "country": "",
             "intermediary": "",
-            "weight": rnd_model_params['layer_nodes']['layer3B']['weight'],
+            "weight": rnd_model_params["layer_nodes"]["layer3B"]["weight"],
             "showLabel": False,
         },
         # Sub-layer 3U: Unbanked users
@@ -58,7 +58,7 @@ def payment_subnetworks_random_models(rnd_model_params):
             "color": "yellow",
             "country": "",
             "intermediary": "",
-            "weight": rnd_model_params['layer_nodes']['layer3Msmall']['weight'],
+            "weight": rnd_model_params["layer_nodes"]["layer3Msmall"]["weight"],
             "showLabel": False,
         },
         # Sub-layer 3Mmedium: MEDIUM Merchant users
@@ -69,7 +69,7 @@ def payment_subnetworks_random_models(rnd_model_params):
             "color": "yellow",
             "country": "",
             "intermediary": "",
-            "weight": rnd_model_params['layer_nodes']['layer3Mmedium']['weight'],
+            "weight": rnd_model_params["layer_nodes"]["layer3Mmedium"]["weight"],
             "showLabel": False,
         },
         # Sub-layer 3Mlarge: LARGE Merchant users
@@ -80,7 +80,7 @@ def payment_subnetworks_random_models(rnd_model_params):
             "color": "yellow",
             "country": "",
             "intermediary": "",
-            "weight": rnd_model_params['layer_nodes']['layer3Mlarge']['weight'],
+            "weight": rnd_model_params["layer_nodes"]["layer3Mlarge"]["weight"],
             "showLabel": False,
         },
     }
@@ -118,7 +118,10 @@ def payment_subnetworks_random_models(rnd_model_params):
                     rnd.fixed,
                     False,
                 ),  # layer1 channels are public by default
-                "weight": (rnd.fixed, rnd_model_params["subnetworks"]["[1<channel>1]"]["weight"]),
+                "weight": (
+                    rnd.fixed,
+                    rnd_model_params["subnetworks"]["[1<channel>1]"]["weight"],
+                ),
             },
         },
         # Layer 2: intermediaries and their intra-layer payment channel connections
@@ -171,8 +174,12 @@ def payment_subnetworks_random_models(rnd_model_params):
                 "weight": (
                     rnd.varying,
                     {
-                        ChannelType.NATIONAL.value: rnd_model_params["subnetworks"]["[2<channel>2]"]["weight"]["national"],
-                        ChannelType.INTERNATIONAL.value: rnd_model_params["subnetworks"]["[2<channel>2]"]["weight"]["international"],
+                        ChannelType.NATIONAL.value: rnd_model_params["subnetworks"][
+                            "[2<channel>2]"
+                        ]["weight"]["national"],
+                        ChannelType.INTERNATIONAL.value: rnd_model_params[
+                            "subnetworks"
+                        ]["[2<channel>2]"]["weight"]["international"],
                     },
                 ),
             },
@@ -217,7 +224,10 @@ def payment_subnetworks_random_models(rnd_model_params):
                     rnd.fixed,
                     False,
                 ),  # layer1-to-layer2 channels are public by default
-                "weight": (rnd.fixed, rnd_model_params["subnetworks"]["[1<channel>2]"]["weight"]),
+                "weight": (
+                    rnd.fixed,
+                    rnd_model_params["subnetworks"]["[1<channel>2]"]["weight"],
+                ),
             },
         },
         # Layer 2->3: payment channels from intermediaries to retail end users
@@ -271,7 +281,10 @@ def payment_subnetworks_random_models(rnd_model_params):
                     rnd.fixed,
                     True,
                 ),  # layer2-to-layer3B channels are private by default
-                "weight": (rnd.fixed, rnd_model_params["subnetworks"]["[2<channel>3B]"]["weight"]),
+                "weight": (
+                    rnd.fixed,
+                    rnd_model_params["subnetworks"]["[2<channel>3B]"]["weight"],
+                ),
             },
         },
         # Layer 2->3: payment channels from intermediaries to retail end users (merchants small)
@@ -327,7 +340,10 @@ def payment_subnetworks_random_models(rnd_model_params):
                     rnd.fixed,
                     True,
                 ),  # layer2-to-layer3Ms channels are private by default
-                "weight": (rnd.fixed, rnd_model_params["subnetworks"]["[2<channel>3Msmall]"]["weight"]),
+                "weight": (
+                    rnd.fixed,
+                    rnd_model_params["subnetworks"]["[2<channel>3Msmall]"]["weight"],
+                ),
             },
         },
         # Layer 2->3: payment channels from intermediaries to retail end users (merchants medium)
@@ -383,7 +399,10 @@ def payment_subnetworks_random_models(rnd_model_params):
                     rnd.fixed,
                     True,
                 ),  # layer2-to-layer3Mm channels are private by default
-                "weight": (rnd.fixed, rnd_model_params["subnetworks"]["[2<channel>3Mmedium]"]["weight"]),
+                "weight": (
+                    rnd.fixed,
+                    rnd_model_params["subnetworks"]["[2<channel>3Mmedium]"]["weight"],
+                ),
             },
         },
         # Layer 2->3: payment channels from intermediaries to retail end users (merchants large)
@@ -439,7 +458,10 @@ def payment_subnetworks_random_models(rnd_model_params):
                     rnd.fixed,
                     True,
                 ),  # layer2-to-layer3Ml channels are private by default
-                "weight": (rnd.fixed, rnd_model_params["subnetworks"]["[2<channel>3Mlarge]"]["weight"]),
+                "weight": (
+                    rnd.fixed,
+                    rnd_model_params["subnetworks"]["[2<channel>3Mlarge]"]["weight"],
+                ),
             },
         },
     }
@@ -447,38 +469,81 @@ def payment_subnetworks_random_models(rnd_model_params):
     # Layer 3: retail end users (citizens, including banked and unbanked) and their intra-layer payment channel connections
     if rnd_model_params["subnetworks"]["[3<channel>3]"]["enabled"]:
         subnetworks_models |= {
-            "[3<channel>3]" : {
-                "ID" : "channels_among_citizens",
-                "description"  : "Network of P2P channels among citizens",
-                "network" : {
-                    "type"  : "MultiDiGraph",
-                    "ekey"  : "l3.l3.{}",
-                    "nodes" : [layer_nodes["layer3B"],layer_nodes["layer3U"]],
-                    "model" : (rnd.watts_strogatz, {
-                        "k" : utils.Δ("p2p_k") > 4,
-                        "p" : utils.Δ("p2p_p") > 0.10
-                    }),
-                    "bidir" : False # P2P network where users do not necessarily reciprocate the opening of a channel
+            "[3<channel>3]": {
+                "ID": "channels_among_citizens",
+                "description": "Network of P2P channels among citizens",
+                "network": {
+                    "type": "MultiDiGraph",
+                    "ekey": "l3.l3.{}",
+                    "nodes": [layer_nodes["layer3B"], layer_nodes["layer3U"]],
+                    "model": (
+                        rnd.watts_strogatz,
+                        {"k": utils.Δ("p2p_k") > 4, "p": utils.Δ("p2p_p") > 0.10},
+                    ),
+                    "bidir": False,  # P2P network where users do not necessarily reciprocate the opening of a channel
                 },
-                "[edge]" : {
-                    "type" : (rnd.fixed, "3<>3"),
+                "[edge]": {
+                    "type": (rnd.fixed, "3<>3"),
                     # The capacity of unidirectional P2P channels retail users establish among themselves
                     # is generated according to an exponential distribution with the given average value
-                    "capacity" : (rnd.beta, {
-                        "min"  : utils.Δ("minP2Pcapacity")  > utils.eu(rnd_model_params["subnetworks"]["[3<channel>3]"]["capacity"]["min"]),
-                        "mean" : utils.Δ("meanP2Pcapacity") > utils.eu(rnd_model_params["subnetworks"]["[3<channel>3]"]["capacity"]["mean"]),
-                        "max"  : utils.Δ("maxP2Pcapacity")  > utils.eu(rnd_model_params["subnetworks"]["[3<channel>3]"]["capacity"]["max"]),
-                        "dev"  : utils.Δ("devP2Pcapacity")  > utils.eu(rnd_model_params["subnetworks"]["[3<channel>3]"]["capacity"]["dev"])}),
-                    "routing_fee" : {
-                        "source" : { ("base","rate") : (rnd.exponential, {"mean" : [utils.eu("0.2cent"), utils.eu("0.02%")], "digits":[4,8]}) },
-                        "target" : { ("base","rate") : (rnd.exponential, {"mean" : [utils.eu("0.2cent"), utils.eu("0.02%")], "digits":[4,8]}) }
+                    "capacity": (
+                        rnd.beta,
+                        {
+                            "min": utils.Δ("minP2Pcapacity")
+                            > utils.eu(
+                                rnd_model_params["subnetworks"]["[3<channel>3]"][
+                                    "capacity"
+                                ]["min"]
+                            ),
+                            "mean": utils.Δ("meanP2Pcapacity")
+                            > utils.eu(
+                                rnd_model_params["subnetworks"]["[3<channel>3]"][
+                                    "capacity"
+                                ]["mean"]
+                            ),
+                            "max": utils.Δ("maxP2Pcapacity")
+                            > utils.eu(
+                                rnd_model_params["subnetworks"]["[3<channel>3]"][
+                                    "capacity"
+                                ]["max"]
+                            ),
+                            "dev": utils.Δ("devP2Pcapacity")
+                            > utils.eu(
+                                rnd_model_params["subnetworks"]["[3<channel>3]"][
+                                    "capacity"
+                                ]["dev"]
+                            ),
+                        },
+                    ),
+                    "routing_fee": {
+                        "source": {
+                            ("base", "rate"): (
+                                rnd.exponential,
+                                {
+                                    "mean": [utils.eu("0.2cent"), utils.eu("0.02%")],
+                                    "digits": [4, 8],
+                                },
+                            )
+                        },
+                        "target": {
+                            ("base", "rate"): (
+                                rnd.exponential,
+                                {
+                                    "mean": [utils.eu("0.2cent"), utils.eu("0.02%")],
+                                    "digits": [4, 8],
+                                },
+                            )
+                        },
                     },
                     "is_private": (
                         rnd.fixed,
                         True,
                     ),  # layer1-to-layer2 channels are private by default
-                    "weight": (rnd.fixed, rnd_model_params["subnetworks"]["[3<channel>3]"]["weight"]),
-                }
+                    "weight": (
+                        rnd.fixed,
+                        rnd_model_params["subnetworks"]["[3<channel>3]"]["weight"],
+                    ),
+                },
             },
         }
 

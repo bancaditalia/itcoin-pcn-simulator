@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate a set of networks."""
+
 import argparse
 import dataclasses
 import logging
@@ -12,7 +13,10 @@ from typing import cast
 
 # Configure Metis environment variables
 import os
-os.environ["METIS_DLL"] = os.path.abspath(os.path.join(os.path.dirname(__file__),f"../../../build/usr/lib/libmetis.so"))
+
+os.environ["METIS_DLL"] = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), f"../../../build/usr/lib/libmetis.so")
+)
 os.environ["METIS_REALTYPEWIDTH"] = "64"
 os.environ["METIS_IDXTYPEWIDTH"] = "64"
 

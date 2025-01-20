@@ -10,6 +10,7 @@
 ########################################################################################################################
 
 """Main entrypoint."""
+
 from statistics_analyzer.commands.analyzer import main
 
 if __name__ == "__main__":
