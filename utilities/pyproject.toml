@@ -15,14 +15,14 @@ homepage = "https://github.com/bancaditalia/itcoin-pcn-simulator/utilities"
 repository = "https://github.com/bancaditalia/itcoin-pcn-simulator/"
 keywords = ["itcoin", "cloth"]
 classifiers = [
-    'Development Status :: 3 - Alpha',
-    'Intended Audience :: Developers',
-    'Intended Audience :: Science/Research',
-    'License :: OSI Approved :: MIT License',
-    'Natural Language :: English',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.11',
-    'Topic :: Scientific/Engineering'
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
 ]
 packages = [
     { include = "statistics_analyzer/**/*.py" }
