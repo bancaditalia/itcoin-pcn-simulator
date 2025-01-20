@@ -80,7 +80,7 @@ class Args:
     nations: NationSpecs
     seed: int | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post initialization checks."""
         if (
             self.p_small_merchants + self.p_medium_merchants + self.p_large_merchants
