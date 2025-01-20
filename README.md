@@ -107,7 +107,7 @@ To generate network topologies, follow these steps:
 
     ```bash
     cd ~/itcoin-pcn-simulator/utilities
-    OUTDIR="${OUTDIR}" poetry shell
+    poetry shell
 
     python statistics_analyzer/commands/analyzer.py \
         --input-dir ../"${OUTDIR}" \
