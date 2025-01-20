@@ -114,7 +114,7 @@ To generate network topologies, follow these steps:
         --output-dir ../"${OUTDIR}"
     ```
 
-## More advances examples
+## More advanced examples
 
 For more advanced examples and simulations, see the following files:
 
