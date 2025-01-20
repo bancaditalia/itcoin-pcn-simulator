@@ -14,23 +14,23 @@ for line in sys.stdin:
 endef
 export PRINT_HELP_PYSCRIPT
 
-.PHONY: black
-black: ## apply black formatting
-	black $(MAKEFILE_ABS_DIR)
+.PHONY: format
+format: ## format code base via "ruff format"
+	ruff format $(MAKEFILE_ABS_DIR)
 
-.PHONY: black-check
-black-check: ## check black formatting
-	black --check $(MAKEFILE_ABS_DIR)
+.PHONY: format-check
+format-check: ## check black formatting
+	ruff format --check $(MAKEFILE_ABS_DIR)
 
 .PHONY: help
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 .PHONY: lint
-lint: ruff black ## apply linting and black formatting
+lint: ruff format ## apply linting and code formatting
 
 .PHONY: lint-check
-lint-check: ruff-check black-check ## check linting and black formatting
+lint-check: ruff-check format-check ## check linting and code formatting
 
 .PHONY: mypy
 mypy: ## static check with mypy
