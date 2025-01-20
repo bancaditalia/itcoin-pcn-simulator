@@ -103,9 +103,9 @@ def _set_balances(g, g_incoming, subnetwork) -> None:
         (start, end, name) = edge
         reverse_edge = (end, start, name)
         channel_capacity = int(g.edges[edge]["capacity"])
-        assert (
-            channel_capacity == g_incoming.edges[reverse_edge]["capacity"]
-        ), f'{channel_capacity} != {g_incoming.edges[reverse_edge]["capacity"]}'
+        assert channel_capacity == g_incoming.edges[reverse_edge]["capacity"], (
+            f"{channel_capacity} != {g_incoming.edges[reverse_edge]['capacity']}"
+        )
         g.edges[edge]["capacity"] = int(g.edges[edge]["capacity"])
         g_incoming.edges[reverse_edge]["capacity"] = int(
             g_incoming.edges[reverse_edge]["capacity"]

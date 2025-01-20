@@ -339,7 +339,9 @@ def lognormal_set_partition(
         partition_size[i] += (
             (-1)
             if sum(partition_size) > len(set_to_partition)
-            else (+1) if sum(partition_size) < len(set_to_partition) else 0
+            else (+1)
+            if sum(partition_size) < len(set_to_partition)
+            else 0
         )
 
     # We partition the input set according the previously computed size for its components

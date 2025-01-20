@@ -83,9 +83,10 @@ def cloth_output(
                 [key, node["label"], node["country"], node["partition"], intermediary],
             )
 
-    with (output_dir / "plasma_network_edges.csv").open(mode="w") as edge_file, (
-        output_dir / "plasma_network_channels.csv"
-    ).open(mode="w") as channel_file:
+    with (
+        (output_dir / "plasma_network_edges.csv").open(mode="w") as edge_file,
+        (output_dir / "plasma_network_channels.csv").open(mode="w") as channel_file,
+    ):
         channel_writer = csv.writer(channel_file)
         channel_writer.writerow(
             [

@@ -1,4 +1,5 @@
 """This module contains model classses and functions for the plasma network generation library."""
+
 import dataclasses
 import re
 from collections import Counter
@@ -75,9 +76,9 @@ class NationSpec:
         """
         try:
             tokens = re.split(r":", s)
-            assert (
-                len(tokens) == 2
-            ), "the nation specification string must be of 2 tokens"
+            assert len(tokens) == 2, (
+                "the nation specification string must be of 2 tokens"
+            )
             name, relative_size_str = tokens
             assert re.fullmatch(r"[A-Z]+", name), f"{name} is not a valid nation name"
             assert name != EU_COUNTRY_CODE, "the EU country code is reserved"
@@ -234,7 +235,9 @@ def select_eurosystem_subset(
     eurosystem_nations = eurosystem_nation_specs.nations
     assert nations.issubset(
         eurosystem_nations,
-    ), f"the given nations must be a subset of the eurosystem nations: {nations - eurosystem_nations}"
+    ), (
+        f"the given nations must be a subset of the eurosystem nations: {nations - eurosystem_nations}"
+    )
 
     # renormalize wrt the given relative size
     relative_size = sum(

@@ -80,7 +80,9 @@ def dump_network_analysis(plasma_network, subnetwork_instances):
                 (
                     "YES"
                     if is_weakly_connected
-                    else "NO" if is_weakly_connected is not None else "UNKNOWN"
+                    else "NO"
+                    if is_weakly_connected is not None
+                    else "UNKNOWN"
                 ),
             ),
         )
@@ -90,7 +92,9 @@ def dump_network_analysis(plasma_network, subnetwork_instances):
                 (
                     "YES"
                     if is_strongly_connected
-                    else "NO" if is_weakly_connected is not None else "UNKNOWN"
+                    else "NO"
+                    if is_weakly_connected is not None
+                    else "UNKNOWN"
                 ),
             ),
         )

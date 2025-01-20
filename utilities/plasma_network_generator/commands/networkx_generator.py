@@ -704,9 +704,9 @@ def parse_size_spec(raw_args: argparse.Namespace) -> RndModel:
         unique_cb=raw_args.unique_cb,
         nations=nation_spec,
     )
-    assert (
-        not rnd_model.unique_cb or rnd_model.number_of_CBs_in_simulation == 1
-    ), "the unique CB flag is not consistent with the provided or inferred number of CBs"
+    assert not rnd_model.unique_cb or rnd_model.number_of_CBs_in_simulation == 1, (
+        "the unique CB flag is not consistent with the provided or inferred number of CBs"
+    )
     return rnd_model
 
 
