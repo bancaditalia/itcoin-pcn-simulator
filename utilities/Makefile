@@ -16,11 +16,11 @@ export PRINT_HELP_PYSCRIPT
 
 .PHONY: black
 black: ## apply black formatting
-	black .
+	black $(MAKEFILE_ABS_DIR)
 
 .PHONY: black-check
 black-check: ## check black formatting
-	black --check .
+	black --check $(MAKEFILE_ABS_DIR)
 
 .PHONY: help
 help:
@@ -34,12 +34,12 @@ lint-check: ruff-check black-check ## check linting and black formatting
 
 .PHONY: mypy
 mypy: ## static check with mypy
-	mypy .
+	mypy $(MAKEFILE_ABS_DIR)
 
 .PHONY: ruff
 ruff: ## run ruff linter on the project. Act on fixable issues
-	ruff check --fix .
+	ruff check --fix $(MAKEFILE_ABS_DIR)
 
 .PHONY: ruff-check
 ruff-check: ## run ruff linter on the project, do not change files
-	ruff check .
+	ruff check $(MAKEFILE_ABS_DIR)
