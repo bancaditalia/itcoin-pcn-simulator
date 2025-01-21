@@ -2828,6 +2828,20 @@ docs = ["myst-parser", "pydata-sphinx-theme", "sphinx"]
 test = ["argcomplete (>=3.0.3)", "mypy (>=1.7.0)", "pre-commit", "pytest (>=7.0,<8.2)", "pytest-mock", "pytest-mypy-testing"]
 
 [[package]]
+name = "types-networkx"
+version = "3.4.2.20241227"
+description = "Typing stubs for networkx"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types_networkx-3.4.2.20241227-py3-none-any.whl", hash = "sha256:adb0e3f0a16c1481a2cfa97772a0b925b220dcf857f0def1c5ab4c4f349e309d"},
+    {file = "types_networkx-3.4.2.20241227.tar.gz", hash = "sha256:6c3be0ed31a7828d713d374017cee91bc23df1d90d81ed434d1952c9a653cfd7"},
+]
+
+[package.dependencies]
+numpy = ">=1.20"
+
+[[package]]
 name = "types-python-dateutil"
 version = "2.9.0.20241206"
 description = "Typing stubs for python-dateutil"
@@ -2981,4 +2995,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "26f0a33d56a32ce12c6c0be0213823e024464751198c21685fc6693b23941f69"
+content-hash = "98e4bf0e33dfd3a18ce41a3f043da0140dd409b86380f26e37b55beda9cb92ca"
