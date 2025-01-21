@@ -263,7 +263,7 @@ def network_size_string(s: str) -> tuple[int, int, int, int]:
         raise argparse.ArgumentTypeError(msg) from None
 
 
-def optional(param_parser: Callable) -> Optional:
+def optional(param_parser: Callable) -> Callable | None:
     """Return a parser that can parse the given parser or None."""
 
     @functools.wraps(param_parser)
