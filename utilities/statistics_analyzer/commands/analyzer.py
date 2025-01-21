@@ -393,9 +393,7 @@ def _compute_total_capacity(args: Args) -> float:
         else f"channels_output_{args.rank_idx}.csv"
     )
     all_channels_df = _read_channels_output_files(args, pattern)
-    all_channels_df["type"] = all_channels_df.apply(
-        lambda x: _set_channel_type(x), axis=1
-    )
+    all_channels_df["type"] = all_channels_df.apply(_set_channel_type, axis=1)
     return float(
         all_channels_df[
             (all_channels_df["type"] == "1<>2") | (all_channels_df["type"] == "2<>2")
@@ -423,7 +421,7 @@ def _do_job(args: Args, pattern: str) -> None:
         lambda x: len(x["route_ids"].split("-")) if x["is_success"] == "1" else nan,
         axis=1,
     )
-    txs_df["routed_by"] = txs_df.apply(lambda x: _compute_routed_by(x), axis=1)
+    txs_df["routed_by"] = txs_df.apply(_compute_routed_by, axis=1)
     txs_df["batch"] = (
         (txs_df["start_time"] / batch_length).astype("int").astype("category")
     )
