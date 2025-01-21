@@ -8,7 +8,6 @@ import re
 from collections.abc import Callable
 from importlib import metadata
 from pathlib import Path
-from typing import Optional
 
 import networkx as nx
 from numpy.random import default_rng
@@ -263,11 +262,11 @@ def network_size_string(s: str) -> tuple[int, int, int, int]:
         raise argparse.ArgumentTypeError(msg) from None
 
 
-def optional(param_parser: Callable) -> Optional:
+def optional(param_parser: Callable) -> Callable | None:
     """Return a parser that can parse the given parser or None."""
 
     @functools.wraps(param_parser)
-    def optional_parser(s: str) -> Optional:
+    def optional_parser(s: str) -> Callable | None:
         try:
             return param_parser(s)
         except ValueError:
