@@ -1,6 +1,5 @@
 import itertools
 import json
-import os
 import pathlib
 import random
 import string
@@ -51,22 +50,16 @@ def run_pcn_simulation(
     verbose: bool,
 ) -> dict:
     # Calculate the input dir
-    topologies_seed_dir = os.path.abspath(os.path.join(topologies_dir, f"seed_{seed}"))
+    topologies_seed_dir = (topologies_dir / f"seed_{seed}").resolve()
     capacity_dir_name = f"capacity-{capacity}"
-    input_dir = os.path.abspath(
-        os.path.join(topologies_seed_dir, f"{capacity_dir_name}/k_0{num_processes}")
-    )
-    if not os.path.exists(input_dir) and num_processes == 1:
-        input_dir = os.path.abspath(
-            os.path.join(topologies_seed_dir, f"{capacity_dir_name}/k_04")
-        )
+    input_dir = topologies_seed_dir / capacity_dir_name / f"k_0{num_processes}"
+    if not input_dir.is_dir() and num_processes == 1:
+        input_dir = topologies_seed_dir / capacity_dir_name / "k_04"
 
     # Calculate the output dir
     date_str = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
     rand_str = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-    output_dir = pathlib.Path(
-        os.path.abspath(os.path.join(results_dir, f"{date_str}-{rand_str}"))
-    )
+    output_dir = (results_dir / f"{date_str}-{rand_str}").resolve()
 
     # Ensure that exactly one between tps and tps_cfg is set
     tps_flag = tps is not None
@@ -195,7 +188,7 @@ def run_all_simulations(
 ) -> pd.DataFrame:
     # Read existing experiments
     results = pd.DataFrame()
-    if os.path.exists(results_file):
+    if results_file.is_file():
         results = pd.read_csv(results_file)
 
     block_congestion_rates = (

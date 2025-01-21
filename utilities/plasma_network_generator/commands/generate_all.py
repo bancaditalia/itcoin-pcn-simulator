@@ -14,9 +14,20 @@ from pathlib import Path
 from textwrap import dedent, indent
 from typing import cast
 
-os.environ["METIS_DLL"] = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../../../build/usr/lib/libmetis.so")
+os.environ["METIS_DLL"] = str(
+    (
+        Path(__file__).parent
+        / ".."
+        / ".."
+        / ".."
+        / "build"
+        / "usr"
+        / "lib"
+        / "libmetis.so"
+    ).resolve()
 )
+
+
 os.environ["METIS_REALTYPEWIDTH"] = "64"
 os.environ["METIS_IDXTYPEWIDTH"] = "64"
 
