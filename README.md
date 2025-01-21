@@ -82,7 +82,7 @@ To generate network topologies, follow these steps:
     mkdir -p experiments/workspace/results
 
     OUTDIR="experiments/workspace/results/$(date +"%Y%m%d%H%M%S")"
-    mkdir -p "${OUTDIR}"
+    mkdir "${OUTDIR}"
 
     NP=4 && \
     INDIR="experiments/workspace/topologies/seed_42/capacity-0.5/k_0${NP}" && \
