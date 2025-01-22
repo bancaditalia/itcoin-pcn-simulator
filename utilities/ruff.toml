@@ -1,4 +1,4 @@
-include = ["*.py", "**/pyproject.toml", ]
+include = ["*.py", "**/pyproject.toml", "*.ipynb" ]
 src = [ "." ]
 target-version = "py311"
 
