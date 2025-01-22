@@ -62,7 +62,7 @@ class Args:
     verbose: bool
     input_dir: Path
     output_dir: Path
-    rank_idx: int
+    rank_idx: int | None
 
     def print_args(self) -> str:
         """Get a string representation of the arguments."""
