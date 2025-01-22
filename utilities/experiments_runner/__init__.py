@@ -6,7 +6,7 @@ import random
 import string
 import subprocess
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
@@ -178,21 +178,21 @@ def run_pcn_simulation(
 
 
 def run_all_simulations(
-    cloth_root_dir,
-    topologies_dir,
-    results_dir,
-    results_file,
-    block_congestion_rates,
-    block_sizes,
-    capacities,
-    num_processess,
-    seeds,
-    simulation_ends,
-    submarine_swap_thresholds,
-    syncs,
-    tpss,
-    tps_cfgs,
-):
+    cloth_root_dir: pathlib.Path,
+    topologies_dir: pathlib.Path,
+    results_dir: pathlib.Path,
+    results_file: pathlib.Path,
+    block_congestion_rates: float | list[float],
+    block_sizes: int | list[int],
+    capacities: float | list[float],
+    num_processess: int | list[int],
+    seeds: int | list[int],
+    simulation_ends: int | list[int],
+    submarine_swap_thresholds: float | list[float],
+    syncs: int | list[int],
+    tpss: int | list[int] | None,
+    tps_cfgs: pathlib.Path | list[pathlib.Path] | None,
+) -> pd.DataFrame:
     # Read existing experiments
     results = pd.DataFrame()
     if os.path.exists(results_file):
@@ -200,26 +200,41 @@ def run_all_simulations(
 
     block_congestion_rates = (
         block_congestion_rates
-        if type(block_congestion_rates) is list
+        if isinstance(block_congestion_rates, list)
         else [block_congestion_rates]
     )
-    block_sizes = block_sizes if type(block_sizes) is list else [block_sizes]
-    capacities = capacities if type(capacities) is list else [capacities]
+    block_sizes = block_sizes if isinstance(block_sizes, list) else [block_sizes]
+    capacities = capacities if isinstance(capacities, list) else [capacities]
     num_processess = (
-        num_processess if type(num_processess) is list else [num_processess]
+        num_processess if isinstance(num_processess, list) else [num_processess]
     )
-    seeds = seeds if type(seeds) is list else [seeds]
+    seeds = seeds if isinstance(seeds, list) else [seeds]
     simulation_ends = (
-        simulation_ends if type(simulation_ends) is list else [simulation_ends]
+        simulation_ends if isinstance(simulation_ends, list) else [simulation_ends]
     )
     submarine_swap_thresholds = (
         submarine_swap_thresholds
-        if type(submarine_swap_thresholds) is list
+        if isinstance(submarine_swap_thresholds, list)
         else [submarine_swap_thresholds]
     )
-    syncs = syncs if type(syncs) is list else [syncs]
-    tpss = tpss if type(tpss) is list else [tpss]
-    tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
+    syncs = syncs if isinstance(syncs, list) else [syncs]
+    # The following code fixes a potential bug: we can't simply pass "None" to
+    # itertools.product(): its arguments must all be iterables.
+    #
+    # If we want to pass None for tpss or tps_cfgs, we have to wrap it.
+    # We choose a tuple because it can be statically typed as an iterable
+    # containing a _single_ literal None, whereas a list would have a variable
+    # number of elements.
+    tpss_iterable: list[int] | tuple[Literal[None]] = (
+        (None,) if tpss is None else tpss if isinstance(tpss, list) else [tpss]
+    )
+    tps_cfgs_iterable: list[pathlib.Path] | tuple[Literal[None]] = (
+        (None,)
+        if tps_cfgs is None
+        else tps_cfgs
+        if isinstance(tps_cfgs, list)
+        else [tps_cfgs]
+    )
 
     for (
         block_congestion_rate,
@@ -241,8 +256,8 @@ def run_all_simulations(
         simulation_ends,
         submarine_swap_thresholds,
         syncs,
-        tpss,
-        tps_cfgs,
+        tpss_iterable,
+        tps_cfgs_iterable,
     ):
         # Define the simulation string
         simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {tps=}, {tps_cfg=}, {sync=}"
