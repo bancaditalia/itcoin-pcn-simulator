@@ -38,18 +38,18 @@ def run_pcn_simulation(
     results_dir: pathlib.Path,
     seed: int,
     capacity: float,
-    simulation_end,
-    tps: int,
-    tps_cfg: pathlib.Path,
-    block_size,
-    block_congestion_rate,
-    submarine_swap_threshold,
-    simulation_log_file,
+    simulation_end: int,
+    tps: int | None,
+    tps_cfg: pathlib.Path | None,
+    block_size: int,
+    block_congestion_rate: float,
+    submarine_swap_threshold: float,
+    simulation_log_file: str,
     sync: int,
     num_processes: int,
     cleanup: bool,
     verbose: bool,
-):
+) -> dict:
     # Calculate the input dir
     topologies_seed_dir = os.path.abspath(os.path.join(topologies_dir, f"seed_{seed}"))
     capacity_dir_name = f"capacity-{capacity}"
