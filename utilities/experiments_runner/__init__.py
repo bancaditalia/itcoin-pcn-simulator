@@ -15,7 +15,7 @@ from statistics_analyzer.commands.analyzer import Args as Statistics_analyzer_ar
 from statistics_analyzer.commands.analyzer import _execute as statistics_analyze
 
 
-def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file):
+def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file: str) -> None:
     for f in output_dir.glob("node_logs_file_*.txt"):
         f.unlink()
     for f in output_dir.glob("edges_output_*.csv"):
