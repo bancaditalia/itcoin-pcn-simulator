@@ -45,6 +45,7 @@ numpy = "^1.26.4"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "1.14.1"
+nbqa = "1.9.1"
 pandas-stubs = "^2.2.1.240316"
 ruff = "0.9.2"
 types-seaborn = "^0.13.2.20240417"
