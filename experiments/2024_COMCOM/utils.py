@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import pathlib
+import re
 from typing import TYPE_CHECKING
 
 import IPython
 
 if TYPE_CHECKING:
     import os
+    from collections.abc import Iterable
+
+MY_DIR = pathlib.Path(__file__).resolve().parent
 
 
 def get_notebook_path_or_cwd() -> pathlib.Path:
@@ -42,3 +46,49 @@ def add_gz_extension_if_exists(filepath: str | os.PathLike) -> pathlib.Path:
         return abs_path
     msg = f"Could not find {abs_path} or {gz_path}"
     raise FileNotFoundError(msg)
+
+
+def _match_single_file(f_path: pathlib.Path, reg_expr: str) -> bool:
+    with f_path.open("r") as f:
+        for line in f:
+            m = re.search(reg_expr, line)
+            if m is not None:
+                return True
+    return False
+
+
+def _grep_files_with_matches(
+    path_iterator: Iterable[pathlib.Path],
+    reg_expr: str,
+) -> list[pathlib.Path]:
+    """Given an iterator over paths and a regex, returns the list of files that
+    match the regex.
+    """
+    return [f for f in path_iterator if _match_single_file(f, reg_expr)]
+
+
+def search_full_simulations(base_path: pathlib.Path) -> list[pathlib.Path]:
+    """Looks for full simulations in directories of the following form:
+        <base_path>/aaaaaaaaaaaa/seed_XXX/simulation_log.txt
+
+    A match is successful if simulation_log.txt indicates that the simuation
+    has been run with waterfall, reverse waterfall and submarine swaps enabled.
+    """
+    reg_expr = r"--waterfall=1 .*--reverse-waterfall=1 .*--submarine-swaps=1"
+    return _grep_files_with_matches(
+        base_path.glob("*/seed_*/simulation_log.txt"), reg_expr
+    )
+
+
+if __name__ == "__main__":
+    bases = {
+        "SF": MY_DIR / "results" / "exp-1" / "SF_PCN",
+        "SH": MY_DIR / "results" / "exp-1" / "SH_PCN",
+    }
+    print("These are the directories that have to be used instead of -FULL:")
+    print()
+    for label, base_path in bases.items():
+        for f in search_full_simulations(base_path):
+            print(f"{label}: {f.relative_to(MY_DIR)}")
+    print()
+    print("DONE: this is implemented in python")
