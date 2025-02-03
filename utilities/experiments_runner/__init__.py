@@ -1,11 +1,9 @@
+import hashlib
 import itertools
 import json
 import pathlib
-import random
 import re
-import string
 import subprocess
-from datetime import datetime
 from enum import Enum
 from typing import Literal, assert_never
 
@@ -52,6 +50,60 @@ def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file: str) -
     # shutil.rmtree(output_dir)
 
 
+def compute_experiment_hash(
+    block_congestion_rate: float,
+    block_size: int,
+    capacity: str,
+    num_processes: int,
+    simulation_end: int,
+    submarine_swap_threshold: float,
+    rebalancing_mode: RebalancingMode,
+    use_known_path: Literal[0, 1],
+    sync: int,
+    tps: int | None,
+    tps_cfg: pathlib.Path | None,
+) -> str:
+    """Computes an hash of the given experiment parameters.
+
+    This hash can be used to place different experiments in different
+    directories.
+
+    Returns a string of length 12, hex encoding of a 6-byte blake2b hash of a
+    binary representation of the parameters.
+    """
+
+    def to_bytes(x: bytes | str | int | Enum | float | None) -> bytes:
+        if isinstance(x, bytes):
+            return x
+        if isinstance(x, str):
+            return x.encode("utf-8")
+        if isinstance(x, int | Enum):
+            return to_bytes(f"{x}")
+        if isinstance(x, float):
+            return to_bytes(f"{x:.20f}")
+        if x is None:
+            return to_bytes("")
+        msg = f"This function does not support serializing values of type {type(x)}"
+        raise ValueError(msg)
+
+    tps_contents: str | None = None
+    if tps_cfg is not None:
+        tps_contents = tps_cfg.read_text()
+    m = hashlib.blake2b(digest_size=6)
+    m.update(to_bytes(block_congestion_rate))
+    m.update(to_bytes(block_size))
+    m.update(to_bytes(capacity))
+    m.update(to_bytes(num_processes))
+    m.update(to_bytes(simulation_end))
+    m.update(to_bytes(submarine_swap_threshold))
+    m.update(to_bytes(rebalancing_mode))
+    m.update(to_bytes(use_known_path))
+    m.update(to_bytes(sync))
+    m.update(to_bytes(tps))
+    m.update(to_bytes(tps_contents))
+    return m.hexdigest()
+
+
 def run_pcn_simulation(
     cloth_root_dir: pathlib.Path,
     topologies_dir: pathlib.Path,
@@ -82,9 +134,7 @@ def run_pcn_simulation(
         input_dir = topologies_seed_dir / capacity_dir_name / "k_04"
 
     # Calculate the output dir
-    date_str = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
-    rand_str = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-    output_dir = (results_dir / f"{date_str}-{rand_str}").resolve()
+    output_dir = results_dir / f"seed_{seed}"
 
     # Ensure that exactly one between tps and tps_cfg is set
     tps_flag = tps is not None
@@ -218,6 +268,11 @@ def run_all_simulations(
     tps_cfgs: pathlib.Path | list[pathlib.Path] | None,
     cleanup: bool,
 ) -> pd.DataFrame:
+    """Simulation results are placed in the following directory structure:
+        <results_dir> / <experiment_parameters_hash> / seed_<seed>
+
+    Where experiment_parameters_hash is computed via compute_experiment_hash().
+    """
     # Read existing experiments
     results = pd.DataFrame()
     if results_file.is_file():
@@ -342,11 +397,24 @@ def run_all_simulations(
             continue
         print(f"Running {simulation_string}")
 
+        experiment_hash = compute_experiment_hash(
+            block_congestion_rate,
+            block_size,
+            capacity,
+            num_processes,
+            simulation_end,
+            submarine_swap_threshold,
+            rebalancing_mode,
+            use_known_path,
+            sync,
+            tps,
+            tps_cfg,
+        )
         simulation_log_file = "simulation_log.txt"
         simulation_result = run_pcn_simulation(
             cloth_root_dir=cloth_root_dir,
             topologies_dir=topologies_dir,
-            results_dir=results_dir,
+            results_dir=results_dir / experiment_hash,
             seed=seed,
             capacity=capacity,
             simulation_end=simulation_end,
