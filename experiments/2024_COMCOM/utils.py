@@ -69,13 +69,16 @@ def _grep_files_with_matches(
     return [f for f in path_iterator if _match_single_file(f, reg_expr)]
 
 
-def search_full_simulations(base_path: pathlib.Path) -> pathlib.Path | None:
+def search_full_simulations(
+    base_path: pathlib.Path, desired_capacity: str
+) -> pathlib.Path | None:
     """Looks for full simulations in directories of the following form:
         <base_path>/aaaaaaaaaaaa/seed_XXX/simulation_log.txt
         <base_path>/aaaaaaaaaaaa/seed_YYY/simulation_log.txt
 
     A match is successful if simulation_log.txt indicates that the simuation
-    has been run with waterfall, reverse waterfall and submarine swaps enabled.
+    has been run with waterfall, reverse waterfall and submarine swaps enabled,
+    and has been run on an input dir indicating the specified capacity.
 
     Returns <base_path>/aaaaaaaaaaaa. See the examples for the conditions.
 
@@ -93,7 +96,7 @@ def search_full_simulations(base_path: pathlib.Path) -> pathlib.Path | None:
         Raises a runtime error: the matching directory after base_path is not
         unique.
     """
-    reg_expr = r"--waterfall=1 .*--reverse-waterfall=1 .*--submarine-swaps=1"
+    reg_expr = rf"--input-dir=.*capacity-{desired_capacity}/.* --waterfall=1 .*--reverse-waterfall=1 .*--submarine-swaps=1"
     glob_pattern = "*/seed_*/simulation_log.txt"
     experiments = _grep_files_with_matches(base_path.glob(glob_pattern), reg_expr)
     if len(experiments) == 0:
@@ -116,11 +119,14 @@ if __name__ == "__main__":
         "SF": MY_DIR / "results" / "exp-1" / "SF_PCN",
         "SH": MY_DIR / "results" / "exp-1" / "SH_PCN",
     }
-    print("These are the directories that have to be used instead of -FULL:")
+    desired_capacity = "0.0018"
+    print(
+        f"These are the directories with capacity {desired_capacity} that have to be used instead of -FULL:"
+    )
     print()
     for label, base_path in bases.items():
         print()
-        result = search_full_simulations(base_path)
+        result = search_full_simulations(base_path, desired_capacity)
         if result is None:
             print(f"{label}: not found")
         else:
