@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import pathlib
 import re
 from typing import TYPE_CHECKING
@@ -11,6 +12,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
 MY_DIR = pathlib.Path(__file__).resolve().parent
+logger = logging.getLogger(__name__)
 
 
 def get_notebook_path_or_cwd() -> pathlib.Path:
@@ -67,17 +69,46 @@ def _grep_files_with_matches(
     return [f for f in path_iterator if _match_single_file(f, reg_expr)]
 
 
-def search_full_simulations(base_path: pathlib.Path) -> list[pathlib.Path]:
+def search_full_simulations(base_path: pathlib.Path) -> pathlib.Path | None:
     """Looks for full simulations in directories of the following form:
         <base_path>/aaaaaaaaaaaa/seed_XXX/simulation_log.txt
+        <base_path>/aaaaaaaaaaaa/seed_YYY/simulation_log.txt
 
     A match is successful if simulation_log.txt indicates that the simuation
     has been run with waterfall, reverse waterfall and submarine swaps enabled.
+
+    Returns <base_path>/aaaaaaaaaaaa. See the examples for the conditions.
+
+    EXAMPLE 1:
+        <base_path>/aaaaaaaaaaaa/seed_XXX/simulation_log.txt
+        <base_path>/aaaaaaaaaaaa/seed_YYY/simulation_log.txt
+
+        Returns <base_path>/aaaaaaaaaaaa.
+
+    EXAMPLE 2:
+        <base_path>/aaaaaaaaaaaa/seed_XXX/simulation_log.txt
+        <base_path>/aaaaaaaaaaaa/seed_YYY/simulation_log.txt
+        <base_path>/bbbbbbbbbbbb/seed_ZZZ/simulation_log.txt
+
+        Raises a runtime error: the matching directory after base_path is not
+        unique.
     """
     reg_expr = r"--waterfall=1 .*--reverse-waterfall=1 .*--submarine-swaps=1"
-    return _grep_files_with_matches(
-        base_path.glob("*/seed_*/simulation_log.txt"), reg_expr
-    )
+    glob_pattern = "*/seed_*/simulation_log.txt"
+    experiments = _grep_files_with_matches(base_path.glob(glob_pattern), reg_expr)
+    if len(experiments) == 0:
+        logger.warning(
+            "Could not find any simulation with '%s' in %s/%s",
+            reg_expr,
+            base_path,
+            glob_pattern,
+        )
+        return None
+    directory_set = {e.parent.parent for e in experiments}
+    if len(directory_set) > 1:
+        msg = f"Too many directories found: {directory_set}"
+        raise RuntimeError(msg)
+    return next(iter(directory_set))
 
 
 if __name__ == "__main__":
@@ -88,7 +119,12 @@ if __name__ == "__main__":
     print("These are the directories that have to be used instead of -FULL:")
     print()
     for label, base_path in bases.items():
-        for f in search_full_simulations(base_path):
-            print(f"{label}: {f.relative_to(MY_DIR)}")
+        print()
+        result = search_full_simulations(base_path)
+        if result is None:
+            print(f"{label}: not found")
+        else:
+            print(f"{label}: {result.relative_to(MY_DIR)}")
+            print(f"{label}: {result.name}")
     print()
     print("DONE: this is implemented in python")
