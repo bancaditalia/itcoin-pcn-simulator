@@ -56,16 +56,16 @@ enum pathfind_error{
   NOPATH
 };
 
-typedef struct router_state{
+struct router_state{
     int n_find_path;
     struct distance* distance;
     struct heap* distance_heap;
     int rollback_count;
-} router_state;
+};
 
 void get_balance(struct node* node, uint64_t *max_balance, uint64_t *total_balance);
 
-struct array* dijkstra(router_state *router_state, long source, long target, long last_hop_id, uint64_t amount, struct network* network, uint64_t current_time, enum pathfind_error *error);
+struct array* dijkstra(struct router_state *router_state, long source, long target, long last_hop_id, uint64_t amount, struct network* network, uint64_t current_time, enum pathfind_error *error);
 
 void generate_payment_route(struct payment* payment, struct array* path, struct network* network);
 
