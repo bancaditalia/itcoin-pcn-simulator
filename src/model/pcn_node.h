@@ -10,11 +10,11 @@
 
 #include <ross.h>
 
-#include "../features/network.h"
 
 #define INF UINT64_MAX
 
 struct message;
+struct node;
 
 //Command Line Argument declarations
 extern unsigned int setting_1;
