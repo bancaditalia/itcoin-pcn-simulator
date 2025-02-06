@@ -25,11 +25,11 @@ extern tw_lptype model_lps[];
 //Function Declarations
 // defined in model_driver.c:
 // LP - Users
-extern void model_init(node *s, tw_lp *lp);
-extern void model_event(node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-extern void model_commit(node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-extern void model_event_reverse(node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-extern void model_final(node *s, tw_lp *lp);
+extern void model_init(struct node *s, tw_lp *lp);
+extern void model_event(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+extern void model_commit(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+extern void model_event_reverse(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+extern void model_final(struct node *s, tw_lp *lp);
 
 // defined in model_map.c:
 extern tw_peid model_map(tw_lpid gid);

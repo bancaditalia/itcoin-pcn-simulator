@@ -79,7 +79,7 @@ struct node_list_element {
 };
 
 /* a node of the payment-channel network */
-typedef struct node {
+struct node {
   long id;
   char* label;
   long intermediary;
@@ -97,7 +97,7 @@ typedef struct node {
   long rw_withdrawal_id;
   // Pending submarine swaps
   struct array* submarine_swaps;
-} node;
+};
 
 /* a bidirectional payment channel of the payment-channel network open between two nodes */
 typedef struct channel {

@@ -31,7 +31,7 @@ tw_lptype model_lps[] = {
     (commit_f) model_commit,
     (final_f) model_final,
     (map_f) metis_map,
-    sizeof(node*)
+    sizeof(struct node*)
   },
   {
     (init_f) blockchain_init,

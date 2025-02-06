@@ -26,7 +26,7 @@
 //Init function
 // - called once for each LP
 // ! LP can only send messages to itself during init !
-void model_init (node *s, tw_lp *lp) {
+void model_init (struct node *s, tw_lp *lp) {
   // init state data
   s = array_get(network->nodes, lp->gid);
   lp->cur_state = s;
@@ -39,7 +39,7 @@ void model_init (node *s, tw_lp *lp) {
 }
 
 // (USER) Forward event handler
-void model_event (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
+void model_event (struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   tw_clock start_time = tw_clock_read();
   // Init message fields that contain results of deserialization
   in_msg->payment = NULL;
@@ -149,7 +149,7 @@ void model_event (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
 }
 
 //Reverse Event Handler
-void model_event_reverse (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
+void model_event_reverse (struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   debug_node_reverse(node_out_file, bf, lp, in_msg);
 
   // undo the state update using the value stored in the 'reverse' message
@@ -227,7 +227,7 @@ void model_event_reverse (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp)
 }
 
 // (USER) Commit event handler
-void model_commit (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
+void model_commit (struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   debug_node_commit(node_out_file, lp, in_msg);
 
   switch (in_msg->type) {
@@ -279,7 +279,7 @@ void model_commit (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
 
 //report any final statistics for this LP
 int pe_header_written=0;
-void model_final (node *s, tw_lp *lp){
+void model_final (struct node *s, tw_lp *lp){
   struct element *iterator;
   if(!pe_header_written++) {
     // Check for payments awaiting expired withdrawals
