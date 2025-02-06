@@ -20,13 +20,13 @@ struct node;
 extern tw_lptype model_lps[];
 
 //Function Declarations
-// defined in model_driver.c:
+// defined in pcn_node.c:
 // LP - Users
-extern void model_init(struct node *s, tw_lp *lp);
-extern void model_event(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-extern void model_commit(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-extern void model_event_reverse(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-extern void model_final(struct node *s, tw_lp *lp);
+void model_init(struct node *s, tw_lp *lp);
+void model_event(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void model_commit(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void model_event_reverse(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void model_final(struct node *s, tw_lp *lp);
 
 
 //Custom mapping prototypes
