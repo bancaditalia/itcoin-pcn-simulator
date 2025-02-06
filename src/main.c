@@ -11,6 +11,7 @@
 #include "model/load.h"
 #include "model/event_trace.h"
 
+#include "utils/array.h"
 #include "utils/heap.h"
 #include "utils/list.h"
 #include "utils/utils.h"
