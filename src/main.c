@@ -160,10 +160,6 @@ int model_main (int argc, char* argv[]) {
 	tw_define_lps(num_lps_per_pe, sizeof(struct message));
 	// note that g_tw_nlp gets set here by tw_define_lps
 
-  // IF there are multiple LP types
-  //    you should define the mapping of GID -> lptype index
-  //g_tw_lp_typemap = &model_typemap;
-
   // set the global variable and initialize each LP's type
   //g_tw_lp_types = model_lps;
   //tw_lp_setup_types();
