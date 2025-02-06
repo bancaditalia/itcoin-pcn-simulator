@@ -1,5 +1,6 @@
 #include "logging.h"
 
+#include "../model/blockchain.h"
 #include "../features/payments.h"
 #include "../features/submarine_swaps.h"
 #include "../model/message.h"
