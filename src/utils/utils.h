@@ -2,9 +2,11 @@
 #define UTILS_H
 #include <stdbool.h>
 
-#include "../features/routing.h"
-
 struct node_pair_result;
+struct node_list_element;
+struct distance;
+struct network;
+struct network_params;
 
 int is_equal_result(struct node_pair_result *a, struct node_pair_result *b);
 
