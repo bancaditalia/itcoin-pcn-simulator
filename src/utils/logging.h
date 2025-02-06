@@ -1,10 +1,12 @@
 #ifndef _logging_h
 #define _logging_h
 
-#include "../model/blockchain.h"
+#include <ross.h>
 
 #define DEBUG_BUF_SIZE 500
 
+struct blockchain_tx;
+struct message;
 struct payment;
 struct submarine_swap;
 
