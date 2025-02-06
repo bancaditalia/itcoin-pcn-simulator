@@ -5,6 +5,8 @@
 #include "message.h"
 #include "global.h"
 
+#include "../features/network.h"
+
 #include "../utils/logging.h"
 #include "../utils/array.h"
 #include "../utils/utils.h"

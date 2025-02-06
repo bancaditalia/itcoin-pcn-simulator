@@ -5,6 +5,7 @@
 // - a main function
 
 //includes
+#include "features/network.h"
 #include "features/routing.h"
 
 #include "model/blockchain.h"

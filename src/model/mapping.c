@@ -10,6 +10,9 @@
 #include "global.h"
 #include "pcn_node.h"
 #include "event_trace.h"
+
+#include "../features/network.h"
+
 #include "../utils/array.h"
 #include "../utils/list.h"
 
