@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <pthread.h>
-#include "payments.h"
 
 #define FINALTIMELOCK 40
 
@@ -12,6 +11,7 @@ struct hash_table;
 struct node;
 struct network;
 struct element;
+struct payment;
 
 struct distance{
   long node;

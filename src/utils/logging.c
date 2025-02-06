@@ -1,5 +1,7 @@
 #include "logging.h"
 
+#include "../features/payments.h"
+
 // Enable tracing
 int g_dbg_trace=0;
 
@@ -11,7 +13,7 @@ void debug_msg(message* msg, char* out){
   snprintf(out, DEBUG_BUF_SIZE, "%s", getEventName(msg->type));
 }
 
-void debug_payment(payment* payment, char* out){
+void debug_payment(struct payment* payment, char* out){
   snprintf(out, DEBUG_BUF_SIZE, "pmt.id %12ld", payment->id);
 }
 

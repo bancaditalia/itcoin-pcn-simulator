@@ -81,7 +81,7 @@ struct submarine_swap* node_find_swap_by_submarine_payment(struct tw_lp* lp, str
 
 void submarine_swaps_on_forward_payment(tw_lp *lp, message *in_msg){
   // Get the payment
-  payment* payment = in_msg->payment;
+  struct payment* payment = in_msg->payment;
 
   /*
    * PrevNode 0 ------- PrevEdge with LOW balance ------> Node 1 ---->
@@ -273,7 +273,7 @@ void submarine_swaps_on_blockchain_tx_commit(tw_lp *lp, blockchain_tx* tx){
   }
 }
 
-void submarine_swaps_on_receive_success(tw_lp *lp, payment* payment){
+void submarine_swaps_on_receive_success(tw_lp *lp, struct payment* payment){
   // Return if the blockchain transaction is not related to swaps
   if(payment->type!=SUBMARINE_SWAP) return;
 
@@ -296,7 +296,7 @@ void submarine_swaps_on_receive_success(tw_lp *lp, payment* payment){
   tw_event_send(next_e);
 }
 
-void submarine_swaps_on_receive_success_rev(tw_lp *lp, payment* payment){
+void submarine_swaps_on_receive_success_rev(tw_lp *lp, struct payment* payment){
   // Do nothing, since the only thing we did was generating the claim HTLC
 }
 
