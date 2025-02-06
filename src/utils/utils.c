@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "heap.h"
 #include "../features/htlc.h"
+#include "../features/payments.h"
 #include "../features/routing.h"
 #include "../model/global.h"
 

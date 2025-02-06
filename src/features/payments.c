@@ -75,7 +75,7 @@ void set_expired_payment(struct payment* payment, uint64_t current_time){
   payment->is_timeout = 1;
 }
 
-void serialize_payment(payment* payment, char* serialized){
+void serialize_payment(struct payment* payment, char* serialized){
     if (!payment || !serialized) {
         return; // Invalid input or insufficient buffer size
     }
@@ -209,9 +209,9 @@ void serialize_payment(payment* payment, char* serialized){
     }
 }
 
-payment* deserialize_payment(const char* serialized){
+struct payment* deserialize_payment(const char* serialized){
 
-    payment* payment;
+    struct payment* payment;
     size_t payment_size = 0;
 
     const char *current_pos = serialized;

@@ -33,8 +33,8 @@ void submarine_swaps_on_blockchain_tx(tw_lp *lp, blockchain_tx* tx);
 void submarine_swaps_on_blockchain_tx_rev(tw_lp *lp, blockchain_tx* tx);
 void submarine_swaps_on_blockchain_tx_commit(tw_lp *lp, blockchain_tx* tx);
 
-void submarine_swaps_on_receive_success(tw_lp *lp, payment* payment);
-void submarine_swaps_on_receive_success_rev(tw_lp *lp, payment* payment);
+void submarine_swaps_on_receive_success(tw_lp *lp, struct payment* payment);
+void submarine_swaps_on_receive_success_rev(tw_lp *lp, struct payment* payment);
 
 // Serialization and deserialization functions
 void serialize_submarine_swap(submarine_swap* tx, char* serialized);

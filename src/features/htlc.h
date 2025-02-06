@@ -10,6 +10,9 @@
 
 #define OFFLINELATENCY 3000 //3 seconds waiting for a node not responding (tcp default retransmission time)
 
+
+struct payment;
+
 /* a node pair result registers the most recent result of a payment (fail or success, with the corresponding amount and time)
    that occurred when the payment traversed an edge connecting the two nodes of the node pair */
 struct node_pair_result{
@@ -25,19 +28,19 @@ uint64_t compute_fee(uint64_t amount_to_forward, struct policy policy);
 
 struct array * find_path(router_state *router_state, struct payment *payment, uint64_t current_time, struct network* network);
 
-int send_payment(tw_lp *lp, payment* payment);
+int send_payment(tw_lp *lp, struct payment* payment);
 
-int forward_payment(tw_lp *lp, payment* payment);
+int forward_payment(tw_lp *lp, struct payment* payment);
 
-void receive_payment(tw_lp *lp, payment* payment);
+void receive_payment(tw_lp *lp, struct payment* payment);
 
-void forward_success(tw_lp *lp, payment* payment);
+void forward_success(tw_lp *lp, struct payment* payment);
 
-void receive_success(tw_lp *lp, payment* payment);
+void receive_success(tw_lp *lp, struct payment* payment);
 
-void forward_fail(tw_lp *lp, payment* payment);
+void forward_fail(tw_lp *lp, struct payment* payment);
 
-void receive_fail(tw_lp *lp, payment* payment);
+void receive_fail(tw_lp *lp, struct payment* payment);
 
 struct route_hop *get_route_hop(long node_id, struct array *route_hops, int is_sender);
 
@@ -47,15 +50,15 @@ void process_success_result(struct node* node, struct payment *payment, uint64_t
 
 void process_fail_result(struct node* node, struct payment *payment, uint64_t current_time);
 
-void notify_payment(tw_lp *lp, payment* payment);
+void notify_payment(tw_lp *lp, struct payment* payment);
 
-void rev_send_payment(tw_lp *lp, payment* payment);
-void rev_forward_payment(tw_lp *lp, payment* payment);
-void rev_receive_payment(tw_lp *lp, payment* payment);
-void rev_forward_success(tw_lp *lp, payment* payment);
-void rev_receive_success(tw_lp *lp, payment* payment);
-void rev_forward_fail(tw_lp *lp, payment* payment);
-void rev_receive_fail(tw_lp *lp, payment* payment);
-void rev_notify_payment(tw_lp *lp, payment* payment);
+void rev_send_payment(tw_lp *lp, struct payment* payment);
+void rev_forward_payment(tw_lp *lp, struct payment* payment);
+void rev_receive_payment(tw_lp *lp, struct payment* payment);
+void rev_forward_success(tw_lp *lp, struct payment* payment);
+void rev_receive_success(tw_lp *lp, struct payment* payment);
+void rev_forward_fail(tw_lp *lp, struct payment* payment);
+void rev_receive_fail(tw_lp *lp, struct payment* payment);
+void rev_notify_payment(tw_lp *lp, struct payment* payment);
 
 #endif

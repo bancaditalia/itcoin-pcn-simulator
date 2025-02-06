@@ -1,7 +1,6 @@
 #ifndef _logging_h
 #define _logging_h
 
-#include "../features/payments.h"
 #include "../features/submarine_swaps.h"
 #include "../model/blockchain.h"
 #include "../model/message.h"

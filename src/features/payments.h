@@ -24,7 +24,7 @@ struct payment_error{
   uint64_t time;
 };
 
-typedef struct payment {
+struct payment {
   long id;
   long sender;
   long receiver;
@@ -45,8 +45,7 @@ typedef struct payment {
   int no_balance_count;
   unsigned int is_timeout;
   enum payment_type type;
-
-} payment;
+};
 
 struct payment* new_payment(long sender, long receiver, uint64_t amount, uint64_t start_time, enum payment_type type);
 void init_payment(struct payment* p, long sender, long receiver, uint64_t amount, uint64_t start_time, enum payment_type type);
@@ -55,7 +54,7 @@ int is_expired_payment(const struct payment* payment, uint64_t current_time);
 void set_expired_payment(struct payment* payment, uint64_t current_time);
 
 // Serialization and deserialization functions
-void serialize_payment(payment* payment, char* serialized);
-payment* deserialize_payment(const char* serialized);
+void serialize_payment(struct payment* payment, char* serialized);
+struct payment* deserialize_payment(const char* serialized);
 
 #endif
