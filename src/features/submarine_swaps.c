@@ -29,7 +29,7 @@ void node_delete_swap(struct tw_lp* lp, submarine_swap* swap){
   }
 }
 
-struct submarine_swap* node_find_swap_by_blockchain_tx(struct tw_lp* lp, blockchain_tx* tx){
+struct submarine_swap* node_find_swap_by_blockchain_tx(struct tw_lp* lp, struct blockchain_tx* tx){
   struct node* node = lp->cur_state;
   struct submarine_swap* swap = NULL;
   for (int i=0; i<array_len(node->submarine_swaps); i++){
@@ -237,7 +237,7 @@ void submarine_swaps_on_blockchain_tx(tw_lp *lp, blockchain_tx* tx){
   }
 }
 
-void submarine_swaps_on_blockchain_tx_rev(tw_lp *lp, blockchain_tx* tx){
+void submarine_swaps_on_blockchain_tx_rev(tw_lp *lp, struct blockchain_tx* tx){
   // Return if the blockchain transaction is not related to swaps
   if(tx->type!=PREPARE_HTLC && tx->type!=CLAIM_HTLC) return;
 
@@ -253,7 +253,7 @@ void submarine_swaps_on_blockchain_tx_rev(tw_lp *lp, blockchain_tx* tx){
   }
 }
 
-void submarine_swaps_on_blockchain_tx_commit(tw_lp *lp, blockchain_tx* tx){
+void submarine_swaps_on_blockchain_tx_commit(tw_lp *lp, struct blockchain_tx* tx){
   // Return if the blockchain transaction is not related to swaps
   if(tx->type!=PREPARE_HTLC && tx->type!=CLAIM_HTLC) return;
 
