@@ -1,8 +1,12 @@
 #ifndef CLOTH_ROSS_TX_GENERATION_H
 #define CLOTH_ROSS_TX_GENERATION_H
 
-#include "pcn_node.h"
+#include <ross.h>
+
 #include "../features/payments.h"
+
+struct message;
+struct node;
 
 /*
  * The load shaping algorithm will divide the total simulation time in
