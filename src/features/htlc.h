@@ -5,14 +5,15 @@
 
 #include <ross.h>
 
-#include "routing.h"
-
 #define OFFLINELATENCY 3000 //3 seconds waiting for a node not responding (tcp default retransmission time)
 
 
 struct edge;
+struct network;
+struct node;
 struct payment;
 struct policy;
+struct router_state;
 
 /* a node pair result registers the most recent result of a payment (fail or success, with the corresponding amount and time)
    that occurred when the payment traversed an edge connecting the two nodes of the node pair */
