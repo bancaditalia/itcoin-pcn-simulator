@@ -28,20 +28,10 @@ extern void model_commit(struct node *s, tw_bf *bf, struct message *in_msg, tw_l
 extern void model_event_reverse(struct node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
 extern void model_final(struct node *s, tw_lp *lp);
 
-// defined in model_map.c:
-extern tw_peid model_map(tw_lpid gid);
-
 
 //Custom mapping prototypes
-void model_custom_mapping(void);
-tw_lp * model_mapping_to_lp(tw_lpid lpid);
-tw_peid model_map(tw_lpid gid);
-
-//Custom mapping prototypes
-//tw_lpid metis_typemap (tw_lpid gid);
 void metis_custom_mapping(void);
 tw_lp * metis_mapping_to_lp(tw_lpid lpid);
 tw_peid metis_map(tw_lpid gid);
 
-tw_lpid model_typemap (tw_lpid gid);
 #endif
