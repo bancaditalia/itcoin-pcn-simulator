@@ -5,6 +5,8 @@
 // - a main function
 
 //includes
+#include "features/routing.h"
+
 #include "model/blockchain.h"
 #include "model/global.h"
 #include "model/pcn_node.h"
