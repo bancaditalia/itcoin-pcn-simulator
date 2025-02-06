@@ -6,6 +6,7 @@
 #include "array.h"
 #include "utils.h"
 #include "heap.h"
+#include "../features/htlc.h"
 #include "../features/routing.h"
 #include "../model/global.h"
 
