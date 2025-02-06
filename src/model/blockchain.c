@@ -6,6 +6,8 @@
 #include "../utils/logging.h"
 #include "../utils/array.h"
 
+#include "../model/message.h"
+
 #include "global.h"
 
 const char* getTxType(blockchain_tx_type type){
@@ -20,7 +22,7 @@ void tick_tock_next_block(tw_lp *sender_lp){
   // Create a new TICK_TOCK_NEXT_BLOCK message to myself
   tw_stime next_block_time_offset = round(tw_rand_exponential(sender_lp->rng, (double) block_time));
   tw_event *first_block_event = tw_event_new(blockchain_lp_gid, next_block_time_offset, sender_lp);
-  message *first_block_msg = tw_event_data(first_block_event);
+  struct message *first_block_msg = tw_event_data(first_block_event);
   first_block_msg->type = TICK_TOCK_NEXT_BLOCK;
   memset(&first_block_msg->data[0], 0, sizeof(first_block_msg->data));
   tw_event_send(first_block_event);
@@ -32,7 +34,7 @@ void blockchain_init(blockchain *s, tw_lp *lp) {
   tick_tock_next_block(lp);
 }
 
-void blockchain_forward(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
+void blockchain_forward(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   tw_clock start_time = tw_clock_read();
   in_msg->fwd_handler_time = tw_now(lp);
   long rng_start_count = lp->rng->count;
@@ -69,14 +71,14 @@ void blockchain_forward(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
         // Notify lps involved in the block transactions about the block
         // Notify the sender
         tw_event *sender_e = tw_event_new(tx->sender, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-        message *sender_msg = tw_event_data(sender_e);
+        struct message *sender_msg = tw_event_data(sender_e);
         sender_msg->type = BC_TX_CONFIRMED;
         serialize_blockchain_tx(tx, sender_msg->data);
         tw_event_send(sender_e);
 
         // Notify the receiver
         tw_event *rcvr_e = tw_event_new(tx->receiver, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-        message *rcvr_msg = tw_event_data(rcvr_e);
+        struct message *rcvr_msg = tw_event_data(rcvr_e);
         rcvr_msg->type = BC_TX_CONFIRMED;
         serialize_blockchain_tx(tx, rcvr_msg->data);
         tw_event_send(rcvr_e);
@@ -103,7 +105,7 @@ void blockchain_forward(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
   in_msg->computation_time = (double) (tw_clock_read() - start_time) / g_tw_clock_rate;
 }
 
-void blockchain_reverse(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
+void blockchain_reverse(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   // Print debug line
   debug_blockchain_reverse(node_out_file, lp, in_msg);
 
@@ -150,7 +152,7 @@ void blockchain_reverse(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
   }
 }
 
-void blockchain_commit(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
+void blockchain_commit(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   debug_blockchain_commit(node_out_file, lp, in_msg);
 }
 

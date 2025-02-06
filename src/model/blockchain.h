@@ -2,7 +2,8 @@
 #define _blockchain_h
 
 #include <ross.h>
-#include "message.h"
+
+struct message;
 
 typedef enum blockchain_tx_type {
   PREPARE_HTLC,
@@ -25,9 +26,9 @@ typedef struct blockchain {
 
 // Event functions
 void blockchain_init(blockchain *s, tw_lp *lp);
-void blockchain_forward(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp);
-void blockchain_reverse(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp);
-void blockchain_commit(blockchain *s, tw_bf *bf, message *in_msg, tw_lp *lp);
+void blockchain_forward(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void blockchain_reverse(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void blockchain_commit(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
 void blockchain_final(blockchain *s, tw_lp *lp);
 
 // Serialization and deserialization functions

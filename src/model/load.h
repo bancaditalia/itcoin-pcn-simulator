@@ -24,9 +24,9 @@ struct tx_generator_state {
 
 void schedule_next_generate_payment(tw_lp *lp, unsigned int routing_latency, unsigned int pmt_delay);
 
-void generate_next_random_payment(node *sender, tw_bf *bf, message *in_msg, tw_lp *lp);
+void generate_next_random_payment(node *sender, tw_bf *bf, struct message *in_msg, tw_lp *lp);
 
-void rollback_withdrawal_if_any(tw_bf *bf, message *in_msg, tw_lp *lp);
+void rollback_withdrawal_if_any(tw_bf *bf, struct message *in_msg, tw_lp *lp);
 
 void init_node_indexes_per_pe();
 

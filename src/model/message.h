@@ -33,7 +33,7 @@ typedef enum event_type {
 //   this contains all data sent in an event
 #define MAX_SERIALIZED_LENGTH 1024
 
-typedef struct {
+struct message {
   // Message type and serialized data
   event_type type;
   char data[MAX_SERIALIZED_LENGTH];
@@ -47,7 +47,7 @@ typedef struct {
   unsigned long rng_count;
   tw_stime fwd_handler_time;
   double computation_time;
-} message;
+};
 
 const char* getEventName(event_type event);
 

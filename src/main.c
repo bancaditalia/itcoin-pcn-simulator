@@ -12,6 +12,7 @@
 #include "model/pcn_node.h"
 #include "model/load.h"
 #include "model/event_trace.h"
+#include "model/message.h"
 
 #include "utils/array.h"
 #include "utils/heap.h"
@@ -155,7 +156,7 @@ int model_main (int argc, char* argv[]) {
   //set up LPs within ROSS
   nlp_user_per_pe = list_len(array_get(network->partitions, g_tw_mynode));
 	int num_lps_per_pe = g_tw_mynode != 0 ? nlp_user_per_pe : nlp_user_per_pe + 1; // node0 gets the blockchain LP
-	tw_define_lps(num_lps_per_pe, sizeof(message));
+	tw_define_lps(num_lps_per_pe, sizeof(struct message));
 	// note that g_tw_nlp gets set here by tw_define_lps
 
   // IF there are multiple LP types

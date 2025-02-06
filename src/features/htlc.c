@@ -286,7 +286,7 @@ int send_payment(tw_lp *lp, struct payment* payment) {
     payment->error.hop = first_route_hop;
     // Generate RECEIVEFAIL
     tw_event *receive_fail_e = tw_event_new(lp->gid, OFFLINELATENCY, lp);
-    message *receive_fail_msg = tw_event_data(receive_fail_e);
+    struct message *receive_fail_msg = tw_event_data(receive_fail_e);
     receive_fail_msg->type = RECEIVEFAIL;
     serialize_payment(payment, receive_fail_msg->data);
     tw_event_send(receive_fail_e);
@@ -300,7 +300,7 @@ int send_payment(tw_lp *lp, struct payment* payment) {
     payment->no_balance_count += 1;
     // Generate RECEIVEFAIL
     tw_event* next_e = tw_event_new(lp->gid, 10, lp);
-    message* next_msg = tw_event_data(next_e);
+    struct message* next_msg = tw_event_data(next_e);
     next_msg->type = RECEIVEFAIL;
     serialize_payment(payment, next_msg->data);
     tw_event_send(next_e);
@@ -314,7 +314,7 @@ int send_payment(tw_lp *lp, struct payment* payment) {
   // Generate RECEIVEPAYMENT or FORWARDPAYMENT
   unsigned int rng_calls = 0;
   tw_event *next_e = tw_event_new(first_route_hop->to_node_id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = first_route_hop->to_node_id == payment->receiver ? RECEIVEPAYMENT : FORWARDPAYMENT;
   serialize_payment(payment, next_msg->data);
   tw_event_send(next_e);
@@ -352,7 +352,7 @@ int forward_payment(tw_lp *lp, struct payment* payment) {
     int prev_node_id = previous_route_hop->from_node_id;
     // Generate RECEIVEFAIL or FORWARDFAIL
     tw_event *receive_fail_e = tw_event_new(prev_node_id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA) + OFFLINELATENCY, lp);
-    message *receive_fail_msg = tw_event_data(receive_fail_e);
+    struct message *receive_fail_msg = tw_event_data(receive_fail_e);
     receive_fail_msg->type = prev_node_id == payment->sender ? RECEIVEFAIL : FORWARDFAIL;
     serialize_payment(payment, receive_fail_msg->data);
     tw_event_send(receive_fail_e);
@@ -377,7 +377,7 @@ int forward_payment(tw_lp *lp, struct payment* payment) {
     if (payment->error.type == NOERROR){
       payment->error.type = NOBALANCE;
       tw_event* notify_evt = tw_event_new(payment->receiver, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-      message* notify_msg = tw_event_data(notify_evt);
+      struct message* notify_msg = tw_event_data(notify_evt);
       notify_msg->type = NOTIFYPAYMENT;
       serialize_payment(payment, notify_msg->data);
       tw_event_send(notify_evt);
@@ -385,7 +385,7 @@ int forward_payment(tw_lp *lp, struct payment* payment) {
 
     // Retry to forward in a few sec
     tw_event *next_e = tw_event_new(node->id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-    message *next_msg = tw_event_data(next_e);
+    struct message *next_msg = tw_event_data(next_e);
     next_msg->type = FORWARDPAYMENT;
     serialize_payment(payment, next_msg->data);
     tw_event_send(next_e);
@@ -399,7 +399,7 @@ int forward_payment(tw_lp *lp, struct payment* payment) {
     long prev_node_id = previous_route_hop->from_node_id;
     // Generate RECEIVEFAIL or FORWARDFAIL
     tw_event *next_e = tw_event_new(prev_node_id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-    message *next_msg = tw_event_data(next_e);
+    struct message *next_msg = tw_event_data(next_e);
     next_msg->type = prev_node_id == payment->sender ? RECEIVEFAIL : FORWARDFAIL;
     serialize_payment(payment, next_msg->data);
     tw_event_send(next_e);
@@ -412,7 +412,7 @@ int forward_payment(tw_lp *lp, struct payment* payment) {
 
   // Generate RECEIVEPAYMENT or FORWARDPAYMENT
   tw_event *next_e = tw_event_new(next_route_hop->to_node_id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = next_route_hop->to_node_id == payment->receiver ? RECEIVEPAYMENT : FORWARDPAYMENT;
   serialize_payment(payment, next_msg->data);
   tw_event_send(next_e);
@@ -446,7 +446,7 @@ void receive_payment(tw_lp *lp, struct payment* payment){
   // Generate RECEIVESUCCESS or FORWARDSUCCESS
   unsigned int rng_calls = 0;
   tw_event *next_e = tw_event_new(prev_node_id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = prev_node_id == payment->sender ? RECEIVESUCCESS : FORWARDSUCCESS;
   serialize_payment(payment, next_msg->data);
   tw_event_send(next_e);
@@ -460,7 +460,7 @@ void receive_payment(tw_lp *lp, struct payment* payment){
     if(node->rw_awaiting_payment != NULL && node->rw_withdrawal_id == payment->id){
       // The awaiting payment has been found, create the FINDPATH
       tw_event *find_path_e = tw_event_new(node->rw_awaiting_payment->sender, 10, lp);
-      message *find_path_msg = tw_event_data(find_path_e);
+      struct message *find_path_msg = tw_event_data(find_path_e);
       find_path_msg->type = FINDPATH;
       serialize_payment(node->rw_awaiting_payment, find_path_msg->data);
       tw_event_send(find_path_e);
@@ -490,7 +490,7 @@ void forward_success(tw_lp *lp, struct payment* payment) {
   // Generate RECEIVESUCCESS or FORWARDSUCCESS
   unsigned int rng_calls = 0;
   tw_event *next_e = tw_event_new(prev_node_id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = prev_node_id == payment->sender ? RECEIVESUCCESS : FORWARDSUCCESS;
   serialize_payment(payment, next_msg->data);
   tw_event_send(next_e);
@@ -525,7 +525,7 @@ void forward_fail(tw_lp *lp, struct payment* payment) {
   // Generate RECEIVEFAIL or FORWARDFAIL
   unsigned int rng_calls = 0;
   tw_event *next_e = tw_event_new(prev_node_id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = prev_node_id == payment->sender ? RECEIVEFAIL : FORWARDFAIL;
   serialize_payment(payment, next_msg->data);
   tw_event_send(next_e);
@@ -551,7 +551,7 @@ void receive_fail(tw_lp *lp, struct payment* payment) {
 
   // Generate FINDPATH
   tw_event *next_e = tw_event_new(payment->sender, 10, lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = FINDPATH;
   serialize_payment(payment, next_msg->data);
   tw_event_send(next_e);
@@ -579,7 +579,7 @@ void notify_payment(tw_lp *lp, struct payment* payment) {
   // Forward the FINDPATH event
   // Here we would like to simulate a RTT between the user and its custodian, to ask and receive for a deposit invoice (200 + 2*RAND), plus the time to create the findpath event (10)
   tw_event *next_e = tw_event_new(deposit_to_forward->sender, 10 + 2*tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = FINDPATH;
   serialize_payment(deposit_to_forward, next_msg->data);
   tw_event_send(next_e);
