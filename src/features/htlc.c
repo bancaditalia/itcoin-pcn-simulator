@@ -14,6 +14,7 @@
 #include "../model/pcn_node.h"
 #include "../model/global.h"
 
+#include "../utils/array.h"
 #include "../utils/list.h"
 #include "../utils/logging.h"
 #include "../utils/utils.h"

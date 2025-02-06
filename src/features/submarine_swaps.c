@@ -1,5 +1,6 @@
 #include "submarine_swaps.h"
 
+#include "../utils/array.h"
 #include "../model/global.h"
 #include "../model/pcn_node.h"
 #include "../model/blockchain.h"

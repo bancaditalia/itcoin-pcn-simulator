@@ -19,6 +19,7 @@
 #include "../features/htlc.h"
 #include "../features/routing.h"
 
+#include "../utils/array.h"
 #include "../utils/logging.h"
 #include "../utils/utils.h"
 
