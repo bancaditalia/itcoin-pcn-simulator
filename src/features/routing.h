@@ -3,13 +3,15 @@
 
 #include <stdint.h>
 #include <pthread.h>
-#include "network.h"
 #include "payments.h"
 
 #define FINALTIMELOCK 40
 
 
 struct hash_table;
+struct node;
+struct network;
+struct element;
 
 struct distance{
   long node;
