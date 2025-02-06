@@ -428,7 +428,7 @@ void schedule_next_generate_payment(tw_lp *lp,
 }
 
 // Generate random payment
-void generate_next_random_payment(node *sender, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
+void generate_next_random_payment(struct node *sender, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   if (in_msg->type != GENERATE_PAYMENT){
     printf("Tx generator of physical entity %ld received event with type != GENERATE_PAYMENT\n", lp->pe->id);
     exit(-1);
