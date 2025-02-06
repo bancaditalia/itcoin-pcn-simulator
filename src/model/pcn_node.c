@@ -18,6 +18,7 @@
 #include "../features/submarine_swaps.h"
 #include "../features/routing.h"
 #include "../features/htlc.h"
+#include "../features/network.h"
 #include "../features/routing.h"
 
 #include "../utils/array.h"
