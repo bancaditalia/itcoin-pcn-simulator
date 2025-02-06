@@ -1,6 +1,7 @@
 #include "logging.h"
 
 #include "../features/payments.h"
+#include "../features/submarine_swaps.h"
 #include "../model/message.h"
 
 // Enable tracing

@@ -1,10 +1,12 @@
 #ifndef _logging_h
 #define _logging_h
 
-#include "../features/submarine_swaps.h"
 #include "../model/blockchain.h"
 
 #define DEBUG_BUF_SIZE 500
+
+struct payment;
+struct submarine_swap;
 
 void debug_lp(char lp_name[5], tw_lp* lp, char* out);
 void debug_msg(struct message* msg, char* out);
