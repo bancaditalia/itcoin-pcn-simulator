@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "event_trace.h"
 
+#include "message.h"
+
 void event_trace(struct message *m, tw_lp *lp, char *buffer, int *collect_flag)
 {
   char event_name[128] = "\0";

@@ -2,9 +2,10 @@
 #define _event_trace_h
 
 #include <ross.h>
-#include "message.h"
 
 extern st_model_types model_types[];
+
+struct message;
 
 typedef struct event_model_data {
     char event_name[128];
