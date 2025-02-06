@@ -4,10 +4,9 @@
 
 #include <ross.h>
 
-#include "payments.h"
-
 struct blockchain_tx;
 struct message;
+struct payment;
 
 typedef enum submarine_swap_state {
   REQUESTED,
