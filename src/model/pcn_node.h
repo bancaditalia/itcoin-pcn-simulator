@@ -1,7 +1,6 @@
 //The header file template for a ROSS model
 //This file includes:
 // - the state and message structs
-// - extern'ed command line arguments
 // - custom mapping function prototypes (if needed)
 // - any other needed structs, enums, unions, or #defines
 
@@ -15,9 +14,6 @@
 
 struct message;
 struct node;
-
-//Command Line Argument declarations
-extern unsigned int setting_1;
 
 //Global variables used by both main and driver
 // - this defines the LP types
