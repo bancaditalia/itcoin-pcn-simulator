@@ -199,7 +199,7 @@ void process_fail_result(struct node* node, struct payment *payment, uint64_t cu
 /*HTLC FUNCTIONS*/
 
 /* find a path for a payment (a modified version of dijkstra is used: see `routing.c`) */
-struct array * find_path(router_state *router_state, struct payment *payment, uint64_t current_time, struct network* network) {
+struct array * find_path(struct router_state *router_state, struct payment *payment, uint64_t current_time, struct network* network) {
   struct array *path;
   enum pathfind_error error;
   struct node* src, *dest;

@@ -27,7 +27,7 @@ struct node_pair_result{
 
 uint64_t compute_fee(uint64_t amount_to_forward, struct policy policy);
 
-struct array * find_path(router_state *router_state, struct payment *payment, uint64_t current_time, struct network* network);
+struct array * find_path(struct router_state *router_state, struct payment *payment, uint64_t current_time, struct network* network);
 
 int send_payment(tw_lp *lp, struct payment* payment);
 
