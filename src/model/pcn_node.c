@@ -39,7 +39,7 @@ void model_init (node *s, tw_lp *lp) {
 }
 
 // (USER) Forward event handler
-void model_event (node *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
+void model_event (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   tw_clock start_time = tw_clock_read();
   // Init message fields that contain results of deserialization
   in_msg->payment = NULL;
@@ -68,7 +68,7 @@ void model_event (node *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
       if (path != NULL){
         // Here we would like to simulate the time required to run a findpath on the sender device
         tw_event *next_e = tw_event_new(in_msg->payment->sender, ROUTING_LATENCY, lp);
-        message *next_msg = tw_event_data(next_e);
+        struct message *next_msg = tw_event_data(next_e);
         generate_payment_route(in_msg->payment, path, network);
         array_free(path);
         next_msg->type = SENDPAYMENT;
@@ -149,7 +149,7 @@ void model_event (node *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
 }
 
 //Reverse Event Handler
-void model_event_reverse (node *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
+void model_event_reverse (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   debug_node_reverse(node_out_file, bf, lp, in_msg);
 
   // undo the state update using the value stored in the 'reverse' message
@@ -227,7 +227,7 @@ void model_event_reverse (node *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
 }
 
 // (USER) Commit event handler
-void model_commit (node *s, tw_bf *bf, message *in_msg, tw_lp *lp) {
+void model_commit (node *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   debug_node_commit(node_out_file, lp, in_msg);
 
   switch (in_msg->type) {

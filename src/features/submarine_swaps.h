@@ -23,11 +23,11 @@ typedef struct submarine_swap {
 } submarine_swap;
 
 // Event handling functions
-void submarine_swaps_on_forward_payment(tw_lp *lp, message *in_msg);
-void submarine_swaps_on_forward_payment_rev(tw_lp *lp, message *in_msg);
+void submarine_swaps_on_forward_payment(tw_lp *lp, struct message *in_msg);
+void submarine_swaps_on_forward_payment_rev(tw_lp *lp, struct message *in_msg);
 
-void submarine_swaps_on_swap_request(tw_lp *lp, message *in_msg);
-void submarine_swaps_on_swap_request_rev(tw_lp *lp, message *in_msg);
+void submarine_swaps_on_swap_request(tw_lp *lp, struct message *in_msg);
+void submarine_swaps_on_swap_request_rev(tw_lp *lp, struct message *in_msg);
 
 void submarine_swaps_on_blockchain_tx(tw_lp *lp, blockchain_tx* tx);
 void submarine_swaps_on_blockchain_tx_rev(tw_lp *lp, blockchain_tx* tx);

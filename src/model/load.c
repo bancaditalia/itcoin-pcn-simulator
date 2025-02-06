@@ -421,14 +421,14 @@ void schedule_next_generate_payment(tw_lp *lp,
   tw_stime event_offset_ms = fmax(routing_latency + pmt_delay + 1, next_payment_event_ms);
 
   tw_event *next_generate_event = tw_event_new(lp->gid, event_offset_ms, lp);
-  message *next_generate_msg = tw_event_data(next_generate_event);
+  struct message *next_generate_msg = tw_event_data(next_generate_event);
   next_generate_msg->type = GENERATE_PAYMENT;
   memset(&next_generate_msg->data[0], 0, sizeof(next_generate_msg->data));
   tw_event_send(next_generate_event);
 }
 
 // Generate random payment
-void generate_next_random_payment(node *sender, tw_bf *bf, message *in_msg, tw_lp *lp) {
+void generate_next_random_payment(node *sender, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   if (in_msg->type != GENERATE_PAYMENT){
     printf("Tx generator of physical entity %ld received event with type != GENERATE_PAYMENT\n", lp->pe->id);
     exit(-1);
@@ -442,7 +442,7 @@ void generate_next_random_payment(node *sender, tw_bf *bf, message *in_msg, tw_l
     memset(&in_msg->data[0], 0, sizeof(in_msg->data));
     tw_stime event_offset = tw_rand_integer(lp->rng, 1, RETRY_GENERATE_RANDOM_MAX_OFFSET);
     tw_event *next_generate_event = tw_event_new(lp->gid, event_offset, lp);
-    message *next_generate_msg = tw_event_data(next_generate_event);
+    struct message *next_generate_msg = tw_event_data(next_generate_event);
     next_generate_msg->type = GENERATE_PAYMENT;
     tw_event_send(next_generate_event);
     in_msg->rng_count = lp->rng->count - rng_initial_count;
@@ -524,7 +524,7 @@ void generate_next_random_payment(node *sender, tw_bf *bf, message *in_msg, tw_l
   // Select the router and forward the FIND_PATH event
   unsigned int pmt_delay = pmt_to_forward->type==WITHDRAWAL ? tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA) : 10;
   tw_event *next_e = tw_event_new(pmt_to_forward->sender, pmt_delay, lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = FINDPATH;
   serialize_payment(pmt_to_forward, next_msg->data);
   tw_event_send(next_e);
@@ -548,7 +548,7 @@ void generate_next_random_payment(node *sender, tw_bf *bf, message *in_msg, tw_l
 }
 
 // Rollback withdrawals if created in generate random payment
-void rollback_withdrawal_if_any(tw_bf *bf, message *in_msg, tw_lp *lp) {
+void rollback_withdrawal_if_any(tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   // Increment the rollback count
   g_pe_tx_generator_state.rollback_count++;
   // If the event was the initial event, or the forward handler didn't generate any payment we do not have to rollback anything

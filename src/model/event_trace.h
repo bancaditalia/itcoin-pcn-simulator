@@ -11,6 +11,6 @@ typedef struct event_model_data {
     double computation_time;
 } event_model_data;
 
-void event_trace(message *m, tw_lp *lp, char *buffer, int *collect_flag);
+void event_trace(struct message *m, tw_lp *lp, char *buffer, int *collect_flag);
 
 #endif

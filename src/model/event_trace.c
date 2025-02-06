@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "event_trace.h"
 
-void event_trace(message *m, tw_lp *lp, char *buffer, int *collect_flag)
+void event_trace(struct message *m, tw_lp *lp, char *buffer, int *collect_flag)
 {
   char event_name[128] = "\0";
   const char* result = getEventName(m->type);

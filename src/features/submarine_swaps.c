@@ -79,7 +79,7 @@ struct submarine_swap* node_find_swap_by_submarine_payment(struct tw_lp* lp, str
 }
 
 
-void submarine_swaps_on_forward_payment(tw_lp *lp, message *in_msg){
+void submarine_swaps_on_forward_payment(tw_lp *lp, struct message *in_msg){
   // Get the payment
   struct payment* payment = in_msg->payment;
 
@@ -163,19 +163,19 @@ void submarine_swaps_on_forward_payment(tw_lp *lp, message *in_msg){
 
   // Forward the SWAP_REQUEST event
   tw_event *next_e = tw_event_new(prev_node->id, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = SWAP_REQUEST;
   serialize_submarine_swap(swap, next_msg->data);
   tw_event_send(next_e);
 }
 
-void submarine_swaps_on_forward_payment_rev(tw_lp *lp, message *in_msg){
+void submarine_swaps_on_forward_payment_rev(tw_lp *lp, struct message *in_msg){
   // Search for a submarine swap that was started by this forward event
   // Delete if the swap was started
   node_delete_swap(lp, in_msg->swap);
 }
 
-void submarine_swaps_on_swap_request(tw_lp *lp, message *in_msg){
+void submarine_swaps_on_swap_request(tw_lp *lp, struct message *in_msg){
   struct node *node = lp->cur_state;
   submarine_swap* swap = in_msg->swap;
 
@@ -197,13 +197,13 @@ void submarine_swaps_on_swap_request(tw_lp *lp, message *in_msg){
     .originator = node->id
   };
   tw_event *next_e = tw_event_new(blockchain_lp_gid, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = BC_TX_BROADCAST;
   serialize_blockchain_tx(&prepare_htlc_tx, next_msg->data);
   tw_event_send(next_e);
 }
 
-void submarine_swaps_on_swap_request_rev(tw_lp *lp, message *in_msg){
+void submarine_swaps_on_swap_request_rev(tw_lp *lp, struct message *in_msg){
   node_delete_swap(lp, in_msg->swap);
 }
 
@@ -227,7 +227,7 @@ void submarine_swaps_on_blockchain_tx(tw_lp *lp, blockchain_tx* tx){
     struct payment* swap_to_forward = new_payment( swap->submarine_sender, swap->submarine_receiver, swap->amount, tw_now(lp), SUBMARINE_SWAP);
     // Forward the FINDPATH event to the current lp
     tw_event *next_e = tw_event_new(swap_to_forward->sender, 10, lp);
-    message *next_msg = tw_event_data(next_e);
+    struct message *next_msg = tw_event_data(next_e);
     next_msg->type = FINDPATH;
     serialize_payment(swap_to_forward, next_msg->data);
     tw_event_send(next_e);
@@ -290,7 +290,7 @@ void submarine_swaps_on_receive_success(tw_lp *lp, struct payment* payment){
     .originator = node->id
   };
   tw_event *next_e = tw_event_new(blockchain_lp_gid, tw_rand_gamma(lp->rng, DELAY_GAMMA_DISTR_ALPHA, DELAY_GAMMA_DISTR_BETA), lp);
-  message *next_msg = tw_event_data(next_e);
+  struct message *next_msg = tw_event_data(next_e);
   next_msg->type = BC_TX_BROADCAST;
   serialize_blockchain_tx(&claim_htlc_tx, next_msg->data);
   tw_event_send(next_e);
