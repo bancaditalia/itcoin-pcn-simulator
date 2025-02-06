@@ -9,6 +9,7 @@
 #include "routing.h"
 #include "network.h"
 
+#include "../utils/hash_table.h"
 #include "../utils/heap.h"
 #include "../utils/list.h"
 #include "../utils/array.h"

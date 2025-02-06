@@ -5,10 +5,11 @@
 #include <pthread.h>
 #include "network.h"
 #include "payments.h"
-#include "../utils/hash_table.h"
 
 #define FINALTIMELOCK 40
 
+
+struct hash_table;
 
 struct distance{
   long node;
