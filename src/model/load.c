@@ -6,6 +6,7 @@
 #include "global.h"
 
 #include "../features/network.h"
+#include "../features/payments.h"
 
 #include "../utils/logging.h"
 #include "../utils/array.h"

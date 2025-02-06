@@ -3,7 +3,6 @@
 
 #include <ross.h>
 
-#include "../features/payments.h"
 
 struct message;
 struct node;
