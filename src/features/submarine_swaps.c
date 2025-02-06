@@ -2,6 +2,7 @@
 
 #include "../utils/array.h"
 #include "../model/global.h"
+#include "../model/message.h"
 #include "../model/pcn_node.h"
 #include "../model/blockchain.h"
 #include "../utils/logging.h"

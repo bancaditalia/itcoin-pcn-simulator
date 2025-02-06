@@ -11,6 +11,7 @@
 
 #include "../features/payments.h"
 
+#include "../model/message.h"
 #include "../model/pcn_node.h"
 #include "../model/global.h"
 

@@ -2,6 +2,7 @@
 #include <limits.h>
 
 #include "load.h"
+#include "message.h"
 #include "global.h"
 
 #include "../utils/logging.h"

@@ -10,6 +10,7 @@
 
 #include "global.h"
 #include "load.h"
+#include "message.h"
 #include "pcn_node.h"
 #include "blockchain.h"
 
