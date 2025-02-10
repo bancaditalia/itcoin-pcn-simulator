@@ -18,9 +18,9 @@ from plasma_network_generator.core import select_eurosystem_subset
 MY_DIR = Path(__file__).resolve().parent
 REPO_BASEPATH = MY_DIR.parent.parent
 
-NB_INTERMEDIARIES = 30
-NB_RETAIL = 300000
-NB_MERCHANTS = 3000
+NB_INTERMEDIARIES = 10
+NB_RETAIL = 3000
+NB_MERCHANTS = 30
 
 
 class TopologyType(Enum):
@@ -89,30 +89,10 @@ def generate_topologies(
 def run_experiment_1() -> None:
     seeds = [
         7,
-        13,
-        23,
-        42,
-        45,
     ]
     capacities = [
-        0.0,
-        0.00001,
-        0.00002,
-        0.00005,
-        0.0001,
-        0.0002,
-        0.0005,
-        0.001,
-        0.0013,
-        0.0015,
         0.0018,
-        0.002,
-        0.005,
         0.01,
-        0.02,
-        0.05,
-        0.1,
-        1.0,
     ]
     # Topology generation
     for topology_type in TopologyType:
@@ -140,7 +120,7 @@ def run_experiment_1() -> None:
             capacities=capacities,
             num_processess=4,
             seeds=seeds,
-            simulation_ends=86400000,
+            simulation_ends=8640000,
             submarine_swap_thresholds=0.9,
             rebalancing=[
                 RebalancingMode.NONE,
@@ -149,7 +129,7 @@ def run_experiment_1() -> None:
             ],
             use_known_paths=1,
             syncs="5 --max-opt-lookahead=100 --batch=1",
-            tpss=2,
+            tpss=1,
             tps_cfgs=None,
             cleanup=False,
         )
@@ -158,15 +138,8 @@ def run_experiment_1() -> None:
 def run_experiment_2() -> None:
     seeds = [
         7,
-        13,
-        23,
-        42,
-        45,
     ]
     capacities = [
-        0.001,
-        0.002,
-        0.005,
         0.01,
     ]
     # Topology generation
@@ -195,7 +168,7 @@ def run_experiment_2() -> None:
             capacities=capacities,
             num_processess=4,
             seeds=seeds,
-            simulation_ends=86400000,
+            simulation_ends=8640000,
             submarine_swap_thresholds=0.9,
             rebalancing=[RebalancingMode.FULL],
             use_known_paths=1,
@@ -209,14 +182,8 @@ def run_experiment_2() -> None:
 def run_experiment_3() -> None:
     seeds = [
         7,
-        13,
-        23,
-        42,
-        45,
     ]
     capacities = [
-        0.001,
-        0.002,
         0.01,
     ]
     # Topology generation
@@ -251,12 +218,12 @@ def run_experiment_3() -> None:
                 capacities=capacities,
                 num_processess=4,
                 seeds=seeds,
-                simulation_ends=18000000,
+                simulation_ends=1800000,
                 submarine_swap_thresholds=0.9,
                 rebalancing=[RebalancingMode.FULL],
                 use_known_paths=1,
                 syncs="5 --max-opt-lookahead=100 --batch=1",
-                tpss=2 * i,
+                tpss=1 * i,
                 tps_cfgs=None,
                 cleanup=False,
             )
