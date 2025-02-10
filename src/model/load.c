@@ -16,13 +16,13 @@ typedef enum {
   POS, ECOM, P2P
 } tx_generator_scenario;
 
-typedef struct tx_generator_event_info {
+struct tx_generator_event_info {
   long id;
   enum payment_type type;
   long sender;
   long receiver;
   uint64_t amount;
-} tx_generator_event_info;
+};
 
 const tx_generator_scenario payment_scenario_values[3] = {
   POS, ECOM, P2P
@@ -534,7 +534,7 @@ void generate_next_random_payment(struct node *sender, tw_bf *bf, struct message
   tw_event_send(next_e);
 
   // Inform the simulator about the payment that we have generated, so that it can be rolled back
-  tx_generator_event_info event_info = {
+  struct tx_generator_event_info event_info = {
     .id = pmt_to_forward->id,
     .type = pmt_to_forward->type,
     .sender = pmt_to_forward->sender,
