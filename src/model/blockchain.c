@@ -60,7 +60,7 @@ void blockchain_forward(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp 
       // Take transactions from the mempool, add them to block
       while(array_len(s->mempool) && array_len(next_block)<available_block_size) {
         // Get the first transaction from the mempool
-        blockchain_tx* tx = array_get(s->mempool, 0);
+        struct blockchain_tx* tx = array_get(s->mempool, 0);
 
         // Delete transaction from the mempool
         array_delete_element_nofree(s->mempool, 0);
@@ -117,7 +117,7 @@ void blockchain_reverse(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp 
 
       // Take transactions from the blocks, add them to the mempool
       while ( array_len(latest_block) ) {
-        blockchain_tx* tx = array_get(latest_block, array_len(latest_block)-1);
+        struct blockchain_tx* tx = array_get(latest_block, array_len(latest_block)-1);
         array_delete_element_nofree(latest_block, array_len(latest_block)-1);
         s->mempool = array_insert(s->mempool, tx);
       }
@@ -128,7 +128,7 @@ void blockchain_reverse(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp 
     case BC_TX_BROADCAST:
       int broadcast_tx_found_in_mempool = 0;
       for (int i=0; i<array_len(s->mempool); i++) {
-        blockchain_tx* tx2 = array_get(s->mempool, i);
+        struct blockchain_tx* tx2 = array_get(s->mempool, i);
         // Here we have to check equality of the pointers directly, since two events for the same on chain tx can be generated
         if(in_msg->tx == tx2){
           broadcast_tx_found_in_mempool = 1;
@@ -168,7 +168,7 @@ void blockchain_final(blockchain *s, tw_lp *lp) {
   array_free(s->blocks);
 }
 
-void serialize_blockchain_tx(blockchain_tx* tx, char* serialized){
+void serialize_blockchain_tx(struct blockchain_tx* tx, char* serialized){
   if (!tx || !serialized) {
       return; // Invalid input or insufficient buffer size
   }
@@ -213,8 +213,8 @@ void serialize_blockchain_tx(blockchain_tx* tx, char* serialized){
 
 }
 
-blockchain_tx* deserialize_blockchain_tx(const char* serialized){
-  blockchain_tx* tx;
+struct blockchain_tx* deserialize_blockchain_tx(const char* serialized){
+  struct blockchain_tx* tx;
   size_t tx_size = 0;
 
   const char *current_pos = serialized;
