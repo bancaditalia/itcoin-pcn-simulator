@@ -28,13 +28,13 @@ void tick_tock_next_block(tw_lp *sender_lp){
   tw_event_send(first_block_event);
 }
 
-void blockchain_init(blockchain *s, tw_lp *lp) {
+void blockchain_init(struct blockchain *s, tw_lp *lp) {
   s->mempool = array_initialize(10*block_size);
   s->blocks = array_initialize(100);
   tick_tock_next_block(lp);
 }
 
-void blockchain_forward(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
+void blockchain_forward(struct blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   tw_clock start_time = tw_clock_read();
   in_msg->fwd_handler_time = tw_now(lp);
   long rng_start_count = lp->rng->count;
@@ -105,7 +105,7 @@ void blockchain_forward(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp 
   in_msg->computation_time = (double) (tw_clock_read() - start_time) / g_tw_clock_rate;
 }
 
-void blockchain_reverse(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
+void blockchain_reverse(struct blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   // Print debug line
   debug_blockchain_reverse(node_out_file, lp, in_msg);
 
@@ -152,11 +152,11 @@ void blockchain_reverse(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp 
   }
 }
 
-void blockchain_commit(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
+void blockchain_commit(struct blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp) {
   debug_blockchain_commit(node_out_file, lp, in_msg);
 }
 
-void blockchain_final(blockchain *s, tw_lp *lp) {
+void blockchain_final(struct blockchain *s, tw_lp *lp) {
   // Deallocate the mempool
   array_free(s->mempool);
 

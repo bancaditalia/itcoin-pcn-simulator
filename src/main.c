@@ -42,7 +42,7 @@ tw_lptype model_lps[] = {
     (commit_f) blockchain_commit,
     (final_f) blockchain_final,
     (map_f) metis_map,
-    sizeof(blockchain)
+    sizeof(struct blockchain)
   }
 };
 
