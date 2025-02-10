@@ -19,17 +19,17 @@ struct blockchain_tx {
   long originator;
 };
 
-typedef struct blockchain {
+struct blockchain {
   struct array* mempool;
   struct array* blocks; // Array of arrays of blockchain_tx
-} blockchain;
+};
 
 // Event functions
-void blockchain_init(blockchain *s, tw_lp *lp);
-void blockchain_forward(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-void blockchain_reverse(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-void blockchain_commit(blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
-void blockchain_final(blockchain *s, tw_lp *lp);
+void blockchain_init(struct blockchain *s, tw_lp *lp);
+void blockchain_forward(struct blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void blockchain_reverse(struct blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void blockchain_commit(struct blockchain *s, tw_bf *bf, struct message *in_msg, tw_lp *lp);
+void blockchain_final(struct blockchain *s, tw_lp *lp);
 
 // Serialization and deserialization functions
 void serialize_blockchain_tx(struct blockchain_tx* tx, char* serialized);
