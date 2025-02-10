@@ -112,7 +112,7 @@ struct channel {
 };
 
 /* an edge represents one of the two direction of a payment channel */
-typedef struct edge {
+struct edge {
   long id;
   long channel_id;
   long from_node_id;
@@ -122,7 +122,7 @@ typedef struct edge {
   uint64_t balance;
   unsigned int is_closed;
   uint64_t tot_flows;
-} edge;
+};
 
 
 struct graph_channel {
