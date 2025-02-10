@@ -1,0 +1,143 @@
+build/itcoin-pcn-simulator --input-dir=/mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/topologies/SF_PCN/seed_45/capacity-0.01000/k_04 --output-dir=/mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/results/exp-1/SF_PCN/2d28d34db687/seed_45 --synch=5 --max-opt-lookahead=100 --batch=1 --extramem=400000 --waterfall=1 --reverse-waterfall=1 --use-known-paths=1 --submarine-swaps=1 --end=864 --tps=2 --block-size=4 --block-congestion-rate=0 --submarine-swap-threshold=0.9 
+
+Fri Feb  7 11:18:24 2025
+
+ROSS Version: v8.0.0
+
+tw_net_start: Found world size to be 4 
+SIMULATION PARAMETERS:
+tps (Global network-wide transactions per second to generate):  2
+input-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/topologies/SF_PCN/seed_45/capacity-0.01000/k_04
+output-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/results/exp-1/SF_PCN/2d28d34db687/seed_45
+SIMULATION PARAMETERS:
+tps (Global network-wide transactions per second to generate):  2
+input-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/topologies/SF_PCN/seed_45/capacity-0.01000/k_04
+output-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/results/exp-1/SF_PCN/2d28d34db687/seed_45
+SIMULATION PARAMETERS:
+tps (Global network-wide transactions per second to generate):  2
+input-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/topologies/SF_PCN/seed_45/capacity-0.01000/k_04
+output-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/results/exp-1/SF_PCN/2d28d34db687/seed_45
+SIMULATION PARAMETERS:
+tps (Global network-wide transactions per second to generate):  2
+input-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/topologies/SF_PCN/seed_45/capacity-0.01000/k_04
+output-dir: /mnt/md/hot-data/documenti/lavoro/banca-italia/code/itcoin/itcoin-pcn-simulator-WORK/experiments/2024_COMCOM/results/exp-1/SF_PCN/2d28d34db687/seed_45
+INFO: no --tps-cfg parameter was passed. The tx generator will generate a constant load read from --tps (or its default value)
+INFO: no --tps-cfg parameter was passed. The tx generator will generate a constant load read from --tps (or its default value)
+INFO: no --tps-cfg parameter was passed. The tx generator will generate a constant load read from --tps (or its default value)
+INFO: no --tps-cfg parameter was passed. The tx generator will generate a constant load read from --tps (or its default value)
+
+ROSS Core Configuration: 
+	Total PEs                                                    4
+	Total KPs                                          [Nodes (4) x KPs (16)] 64
+	Total LPs                                               303031
+	Simulation End Time                                     864.00
+	LP-to-PE Mapping                                   model defined
+
+
+ROSS Event Memory Allocation:
+	Model events                                            402049
+	Network events                                              16
+	Total events                                              2064
+
+*** START PARALLEL OPTIMISTIC SIMULATION WITH SUSPEND LP FEATURE AND REAL TIME GVT ***
+
+GVT #2: simulation 61% complete, max event queue size 2 (GVT = 528.0000).
+AVL tree size: 0
+GVT #3: simulation 73% complete, max event queue size 2 (GVT = 635.0705).
+AVL tree size: 0
+GVT #4: simulation 81% complete, max event queue size 2 (GVT = 701.0454).
+AVL tree size: 2
+GVT #5: simulation 81% complete, max event queue size 2 (GVT = 701.0454).
+AVL tree size: 2
+GVT #6: simulation 84% complete, max event queue size 2 (GVT = 730.3703).
+AVL tree size: 3
+GVT #7: simulation 99% complete, max event queue size 2 (GVT = 856.9491).
+AVL tree size: 1
+GVT #8: simulation 100% complete, max event queue size 2 (GVT = MAX).
+AVL tree size: 0
+*** END SIMULATION ***
+
+TX GENERATOR STATE: LPs on PE 1 rolled back 0 TXs
+Running finalize_node_pending_payments
+TX GENERATOR STATE: LPs on PE 0 rolled back 0 TXs
+Running finalize_node_pending_payments
+TX GENERATOR STATE: LPs on PE 2 rolled back 0 TXs
+Running finalize_node_pending_payments
+Running finalize_node_indexes_per_pe
+TX GENERATOR STATE: LPs on PE 3 rolled back 0 TXs
+Running finalize_node_pending_payments
+Running finalize_node_indexes_per_pe
+Running finalize_node_indexes_per_pe
+Running finalize_node_indexes_per_pe
+
+	: Running Time = 0.0011 seconds
+
+TW Library Statistics:
+	Total Events Processed                                      35
+	Events Aborted (part of RBs)                                 0
+	Events Rolled Back                                           3
+	Event Ties Detected in PE Queues                             0
+	Efficiency                                               90.62 %
+	Total Remote (shared mem) Events Processed                   0
+	Percent Remote Events                                     0.00 %
+	Total Remote (network) Events Processed                      6
+	Percent Remote Events                                    18.75 %
+
+	Total Roll Backs                                             3
+	Primary Roll Backs                                           1
+	Secondary Roll Backs                                         2
+	Fossil Collect Attempts                                     36
+	Total GVT Computations                                       9
+
+	Net Events Processed                                        32
+	Event Rate (events/sec)                                28959.3
+	Total Events Scheduled Past End Time                    300004
+
+TW Memory Statistics:
+	Events Allocated                                        402065
+	Memory Allocated                                        916476
+	Memory Wasted                                              408
+
+TW Network Statistics:
+	Remote sends                                                 8
+	Remote recvs                                                 8
+
+TW Data Structure sizes in bytes (sizeof):
+	PE struct                                                 3888
+	KP struct                                                  960
+	LP struct                                                  960
+	LP Model struct                                             16
+	LP RNGs                                                     80
+	Total LP                                                  1056
+	Event struct                                               976
+	Event struct with Model                                   2056
+
+TW Clock Cycle Statistics (MAX values in secs at 1.0000 GHz):
+	Initialization                                          8.3634
+	Priority Queue (enq/deq)                                0.0000
+	AVL Tree (insert/delete)                                0.0000
+	LZ4 (de)compression                                     0.0000
+	Buddy system                                            0.0000
+	Event Processing                                        0.0033
+	Event Cancel                                            0.0000
+	Event Abort                                             0.0000
+
+	GVT                                                     0.0041
+	Fossil Collect                                          0.0000
+	Primary Rollbacks                                       0.0000
+	Network Read                                            0.0000
+	Other Network                                           0.0000
+	Instrumentation (computation)                           0.0000
+	Instrumentation (write)                                 0.0000
+	Total Time (Note: Using Running Time above for Speedup)      0.0043
+
+TW GVT Statistics: MPI AllReduce
+	GVT Interval                                                16
+	GVT Real Time Interval (cycles)                    16000000
+	GVT Real Time Interval (sec)                        0.01600000
+	Batch Size                                                   1
+
+	Forced GVT                                                   0
+	Total GVT Computations                                       9
+	Total All Reduce Calls                                      21
+	Average Reduction / GVT                                   2.33
