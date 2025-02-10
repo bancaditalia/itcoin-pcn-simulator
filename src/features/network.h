@@ -100,7 +100,7 @@ struct node {
 };
 
 /* a bidirectional payment channel of the payment-channel network open between two nodes */
-typedef struct channel {
+struct channel {
   long id;
   long node1;
   long node2;
@@ -109,7 +109,7 @@ typedef struct channel {
   uint64_t capacity;
   unsigned int is_closed;
   unsigned int is_private;
-} channel;
+};
 
 /* an edge represents one of the two direction of a payment channel */
 typedef struct edge {
