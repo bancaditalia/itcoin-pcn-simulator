@@ -189,7 +189,7 @@ void submarine_swaps_on_swap_request(tw_lp *lp, struct message *in_msg){
   node->submarine_swaps = array_insert(node->submarine_swaps, swap);
 
   // Send the prepare htlc
-  blockchain_tx prepare_htlc_tx = {
+  struct blockchain_tx prepare_htlc_tx = {
     .type = PREPARE_HTLC,
     .sender = swap->submarine_receiver, // The prepare sender is the submarine receiver
     .receiver = swap->submarine_sender, // The prepare receiver is the submarine sender
@@ -208,7 +208,7 @@ void submarine_swaps_on_swap_request_rev(tw_lp *lp, struct message *in_msg){
   node_delete_swap(lp, in_msg->swap);
 }
 
-void submarine_swaps_on_blockchain_tx(tw_lp *lp, blockchain_tx* tx){
+void submarine_swaps_on_blockchain_tx(tw_lp *lp, struct blockchain_tx* tx){
   // Return if the blockchain transaction is not related to swaps
   if(tx->type!=PREPARE_HTLC && tx->type!=CLAIM_HTLC) return;
 
@@ -282,7 +282,7 @@ void submarine_swaps_on_receive_success(tw_lp *lp, struct payment* payment){
   struct submarine_swap* swap = node_find_swap_by_submarine_payment(lp, payment);
 
   // Claim HTLC
-  blockchain_tx claim_htlc_tx = {
+  struct blockchain_tx claim_htlc_tx = {
     .type = CLAIM_HTLC,
     .sender = swap->submarine_receiver, // The claim sender is the submarine receiver
     .receiver = swap->submarine_sender, // The claim receiver is the submarine sender
