@@ -1,16 +1,36 @@
+import hashlib
 import itertools
 import json
 import pathlib
-import random
-import string
+import re
 import subprocess
-from datetime import datetime
+from enum import Enum
+from typing import Literal, assert_never
 
 import numpy as np
 import pandas as pd
 
+from plasma_network_generator.utils import fraction_format_str, nb_digits_after_comma
 from statistics_analyzer.commands.analyzer import Args as Statistics_analyzer_args
 from statistics_analyzer.commands.analyzer import _execute as statistics_analyze
+
+
+class RebalancingMode(Enum):
+    FULL = "Full"
+    REV = "Rev"
+    NONE = "None"
+
+
+def select_rebalancing_mode(
+    rebalancing_mode: RebalancingMode,
+) -> tuple[Literal[0, 1], Literal[0, 1], Literal[0, 1]]:
+    if rebalancing_mode == RebalancingMode.FULL:
+        return 1, 1, 1
+    if rebalancing_mode == RebalancingMode.REV:
+        return 1, 1, 0
+    if rebalancing_mode == RebalancingMode.NONE:
+        return 0, 0, 0
+    assert_never(rebalancing_mode)
 
 
 def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file: str) -> None:
@@ -30,18 +50,75 @@ def cleanup_pcn_simulation(output_dir: pathlib.Path, simulation_log_file: str) -
     # shutil.rmtree(output_dir)
 
 
+def compute_experiment_hash(
+    block_congestion_rate: float,
+    block_size: int,
+    capacity: str,
+    num_processes: int,
+    simulation_end: int,
+    submarine_swap_threshold: float,
+    rebalancing_mode: RebalancingMode,
+    use_known_path: Literal[0, 1],
+    sync: int,
+    tps: int | None,
+    tps_cfg: pathlib.Path | None,
+) -> str:
+    """Computes an hash of the given experiment parameters.
+
+    This hash can be used to place different experiments in different
+    directories.
+
+    Returns a string of length 12, hex encoding of a 6-byte blake2b hash of a
+    binary representation of the parameters.
+    """
+    def to_bytes(x: bytes | str | int | Enum | float | None) -> bytes:
+        if isinstance(x, bytes):
+            return x
+        if isinstance(x, str):
+            return x.encode("utf-8")
+        if isinstance(x, int | Enum):
+            return to_bytes(f"{x}")
+        if isinstance(x, float):
+            return to_bytes(f"{x:.20f}")
+        if x is None:
+            return to_bytes("")
+        msg = f"This function does not support serializing values of type {type(x)}"
+        raise ValueError(msg)
+
+    tps_contents: str | None = None
+    if tps_cfg is not None:
+        tps_contents = tps_cfg.read_text()
+    m = hashlib.blake2b(digest_size=6)
+    m.update(to_bytes(block_congestion_rate))
+    m.update(to_bytes(block_size))
+    m.update(to_bytes(capacity))
+    m.update(to_bytes(num_processes))
+    m.update(to_bytes(simulation_end))
+    m.update(to_bytes(submarine_swap_threshold))
+    m.update(to_bytes(rebalancing_mode))
+    m.update(to_bytes(use_known_path))
+    m.update(to_bytes(sync))
+    m.update(to_bytes(tps))
+    m.update(to_bytes(tps_contents))
+    return m.hexdigest()
+
+
 def run_pcn_simulation(
     cloth_root_dir: pathlib.Path,
     topologies_dir: pathlib.Path,
     results_dir: pathlib.Path,
     seed: int,
-    capacity: float,
+    capacity: str,
     simulation_end: int,
     tps: int | None,
     tps_cfg: pathlib.Path | None,
     block_size: int,
     block_congestion_rate: float,
     submarine_swap_threshold: float,
+    waterfall: Literal[0, 1],
+    reverse_waterfall: Literal[0, 1],
+    submarine_swaps: Literal[0, 1],
+    use_known_path: Literal[0, 1],
     simulation_log_file: str,
     sync: int,
     num_processes: int,
@@ -56,9 +133,7 @@ def run_pcn_simulation(
         input_dir = topologies_seed_dir / capacity_dir_name / "k_04"
 
     # Calculate the output dir
-    date_str = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
-    rand_str = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-    output_dir = (results_dir / f"{date_str}-{rand_str}").resolve()
+    output_dir = results_dir / f"seed_{seed}"
 
     # Ensure that exactly one between tps and tps_cfg is set
     tps_flag = tps is not None
@@ -75,9 +150,9 @@ def run_pcn_simulation(
       --input-dir={input_dir} \\
       --output-dir={output_dir} \\
       --synch={sync} --extramem=400000 \\
-      --waterfall=1 --reverse-waterfall=1 \\
-      --use-known-paths=1 \\
-      --submarine-swaps=1 \\
+      --waterfall={waterfall} --reverse-waterfall={reverse_waterfall} \\
+      --use-known-paths={use_known_path} \\
+      --submarine-swaps={submarine_swaps} \\
       --end={simulation_end} \\
       {f"--tps={tps}" if tps_flag else f"--tps-cfg={tps_cfg}"} \\
       --block-size={block_size} \\
@@ -128,6 +203,10 @@ def run_pcn_simulation(
         "tps": tps,
         "tps_cfg": str(tps_cfg),
         "submarine_swap_threshold": submarine_swap_threshold,
+        "waterfall": waterfall,
+        "reverse_waterfall": reverse_waterfall,
+        "submarine_swaps": submarine_swaps,
+        "use_known_path": use_known_path,
         "sync": sync,
         # Simulation results
         "success": float(str(cloth_output["Success"]["Mean"])[:6]),
@@ -181,10 +260,18 @@ def run_all_simulations(
     seeds,
     simulation_ends,
     submarine_swap_thresholds,
+    rebalancing,
+    use_known_paths,
     syncs,
     tpss,
     tps_cfgs,
+    cleanup,
 ):
+    """Simulation results are placed in the following directory structure:
+        <results_dir> / <experiment_parameters_hash> / seed_<seed>
+
+    Where experiment_parameters_hash is computed via compute_experiment_hash().
+    """
     # Read existing experiments
     results = pd.DataFrame()
     if results_file.is_file():
@@ -209,9 +296,32 @@ def run_all_simulations(
         if type(submarine_swap_thresholds) is list
         else [submarine_swap_thresholds]
     )
+    rebalancing = rebalancing if type(rebalancing) is list else [rebalancing]
+    use_known_paths = (
+        use_known_paths if type(use_known_paths) is list else [use_known_paths]
+    )
     syncs = syncs if type(syncs) is list else [syncs]
     tpss = tpss if type(tpss) is list else [tpss]
     tps_cfgs = tps_cfgs if type(tps_cfgs) is list else [tps_cfgs]
+
+    # Calculate the max_nb_digits in topologies_dir
+    a_seed = seeds[0]
+    a_topologies_seed_dir = topologies_dir / f"seed_{a_seed}"
+    capacities_in_a_topologies_seed_dir = [
+        float(
+            re.search(
+                r"capacity-([0-9]*\.[0-9]*)",
+                str(f.name),
+                re.IGNORECASE,
+            ).group(1)
+        )
+        for f in a_topologies_seed_dir.iterdir()
+        if f.is_dir()
+    ]
+    max_nb_digits = max(map(nb_digits_after_comma, capacities_in_a_topologies_seed_dir))
+    capacities_formatted = [
+        fraction_format_str(cap, max_nb_digits) for cap in capacities
+    ]
 
     for (
         block_congestion_rate,
@@ -221,32 +331,44 @@ def run_all_simulations(
         seed,
         simulation_end,
         submarine_swap_threshold,
+        rebalancing_mode,
+        use_known_path,
         sync,
         tps,
         tps_cfg,
     ) in itertools.product(
         block_congestion_rates,
         block_sizes,
-        capacities,
+        capacities_formatted,
         num_processess,
         seeds,
         simulation_ends,
         submarine_swap_thresholds,
+        rebalancing,
+        use_known_paths,
         syncs,
         tpss,
         tps_cfgs,
     ):
         # Define the simulation string
-        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {tps=}, {tps_cfg=}, {sync=}"
+        simulation_string = f"{block_congestion_rate=}, {block_size=}, {capacity=}, {num_processes=}, {seed=}, {simulation_end=}, {submarine_swap_threshold=}, {rebalancing_mode.value=}, {use_known_path=}, {tps=}, {tps_cfg=}, {sync=}"
+
+        waterfall, reverse_waterfall, submarine_swaps = select_rebalancing_mode(
+            rebalancing_mode
+        )
 
         if (not results.empty) and (
             (results["block_congestion_rate"] == block_congestion_rate)
             & (results["block_size"] == block_size)
-            & (results["capacity"] == capacity)
+            & (results["capacity"] == float(capacity))
             & (results["num_processes"] == num_processes)
             & (results["seed"] == seed)
             & (results["simulation_end"] == simulation_end)
             & (results["submarine_swap_threshold"] == submarine_swap_threshold)
+            & (results["waterfall"] == waterfall)
+            & (results["reverse_waterfall"] == reverse_waterfall)
+            & (results["submarine_swaps"] == submarine_swaps)
+            & (results["use_known_path"] == use_known_path)
             & (
                 (results["tps_cfg"] == tps_cfg)
                 if tps_cfg is not None
@@ -258,11 +380,24 @@ def run_all_simulations(
             continue
         print(f"Running {simulation_string}")
 
+        experiment_hash = compute_experiment_hash(
+            block_congestion_rate,
+            block_size,
+            capacity,
+            num_processes,
+            simulation_end,
+            submarine_swap_threshold,
+            rebalancing_mode,
+            use_known_path,
+            sync,
+            tps,
+            tps_cfg,
+        )
         simulation_log_file = "simulation_log.txt"
         simulation_result = run_pcn_simulation(
             cloth_root_dir=cloth_root_dir,
             topologies_dir=topologies_dir,
-            results_dir=results_dir,
+            results_dir=results_dir / experiment_hash,
             seed=seed,
             capacity=capacity,
             simulation_end=simulation_end,
@@ -271,10 +406,14 @@ def run_all_simulations(
             block_size=block_size,
             block_congestion_rate=block_congestion_rate,
             submarine_swap_threshold=submarine_swap_threshold,
+            waterfall=waterfall,
+            reverse_waterfall=reverse_waterfall,
+            submarine_swaps=submarine_swaps,
+            use_known_path=use_known_path,
             simulation_log_file=simulation_log_file,
             sync=sync,
             num_processes=num_processes,
-            cleanup=True,
+            cleanup=cleanup,
             verbose=False,
         )
 

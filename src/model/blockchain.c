@@ -1,5 +1,6 @@
 #include "blockchain.h"
 
+#include <dirent.h>
 #include <ross.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,7 +46,9 @@ void blockchain_forward(struct blockchain *s, tw_bf *bf, struct message *in_msg,
       debug_blockchain_forward(node_out_file, lp, in_msg);
 
       // Allocate the block
-      struct array* next_block = array_initialize(block_size);
+      struct block* next_block = malloc(sizeof(struct block));
+      next_block->confirmation_time = tw_now(lp);
+      next_block->transactions = array_initialize(block_size);
 
       // Available block size depends on the congestion rate
       int block_period = 100;
@@ -58,7 +61,7 @@ void blockchain_forward(struct blockchain *s, tw_bf *bf, struct message *in_msg,
       int available_block_size = transactions_x_block_int + 1*(next_block_number_in_period<transactions_x_block_rem);
 
       // Take transactions from the mempool, add them to block
-      while(array_len(s->mempool) && array_len(next_block)<available_block_size) {
+      while(array_len(s->mempool) && array_len(next_block->transactions)<available_block_size) {
         // Get the first transaction from the mempool
         struct blockchain_tx* tx = array_get(s->mempool, 0);
 
@@ -66,7 +69,7 @@ void blockchain_forward(struct blockchain *s, tw_bf *bf, struct message *in_msg,
         array_delete_element_nofree(s->mempool, 0);
 
         // Add transaction to the block
-        next_block = array_insert(next_block, tx);
+        next_block->transactions = array_insert(next_block->transactions, tx);
 
         // Notify lps involved in the block transactions about the block
         // Notify the sender
@@ -113,12 +116,12 @@ void blockchain_reverse(struct blockchain *s, tw_bf *bf, struct message *in_msg,
   switch (in_msg->type) {
     case TICK_TOCK_NEXT_BLOCK:
       // Take the latest added block
-      struct array* latest_block = array_get(s->blocks, array_len(s->blocks)-1);
+      struct block* latest_block = array_get(s->blocks, array_len(s->blocks)-1);
 
       // Take transactions from the blocks, add them to the mempool
-      while ( array_len(latest_block) ) {
-        struct blockchain_tx* tx = array_get(latest_block, array_len(latest_block)-1);
-        array_delete_element_nofree(latest_block, array_len(latest_block)-1);
+      while ( array_len(latest_block->transactions) ) {
+        struct blockchain_tx* tx = array_get(latest_block->transactions, array_len(latest_block->transactions)-1);
+        array_delete_element_nofree(latest_block->transactions, array_len(latest_block->transactions)-1);
         s->mempool = array_insert(s->mempool, tx);
       }
 
@@ -157,13 +160,61 @@ void blockchain_commit(struct blockchain *s, tw_bf *bf, struct message *in_msg, 
 }
 
 void blockchain_final(struct blockchain *s, tw_lp *lp) {
+  // Check the output directory
+  DIR* results_dir = opendir(output_dir_name);
+  if(!results_dir){
+    printf("ERROR: blockchain.c cannot find the output directory (%s).\n", output_dir_name);
+    exit(EXIT_FAILURE);
+  }
+
+  // Build the filename
+  char formatted_filename[50];
+  sprintf(formatted_filename, "/blockchain_output_%ld.csv", g_tw_mynode);
+
+  char output_filename[PATH_MAX];
+  strcpy(output_filename, output_dir_name);
+  strcat(output_filename, formatted_filename);
+
+  // Try open the blockchain output file
+  FILE* csv_blockchain_output = fopen(output_filename, "w");
+  if(csv_blockchain_output  == NULL) {
+    printf("ERROR: blockchain.c cannot open blockchain_output.csv\n");
+    exit(EXIT_FAILURE);
+  }
+
+  // Write the header to the csv
+  fprintf(csv_blockchain_output, "confirmed, block.height, block.time, tx.type, tx.sender, tx.receiver,tx.amount, tx.start_time, tx.originator\n");
+
+  // Print the blockchain transactions
+  for(int i=0; i<array_len(s->blocks); i++) {
+    struct block* block = array_get(s->blocks, i);
+    for (int j=0; j<array_len(block->transactions); j++){
+      struct blockchain_tx* tx = array_get(block->transactions, j);
+      // Write the transaction to the csv
+      fprintf(csv_blockchain_output, "%d, %3d, %10.2f, %s, %6ld, %6ld, %6ld, %10.2f, %6ld\n",
+        1, i, block->confirmation_time, getTxType(tx->type), tx->sender, tx->receiver, tx->amount, tx->start_time, tx->originator);
+    }
+  }
+
+  // Print the mempool
+  for (int j=0; j<array_len(s->mempool); j++){
+    struct blockchain_tx* tx = array_get(s->mempool, j);
+    // Write the transaction to the csv
+    fprintf(csv_blockchain_output, "%d,    ,           , %s, %6ld, %6ld, %6ld, %10.2f, %6ld\n",
+      0, getTxType(tx->type), tx->sender, tx->receiver, tx->amount, tx->start_time, tx->originator);
+  }
+
+  // Close the file and the results dir
+  fclose(csv_blockchain_output);
+  closedir(results_dir);
+
   // Deallocate the mempool
   array_free(s->mempool);
 
   // Deallocate blocks
   for (int i=0; i<array_len(s->blocks); i++) {
-    struct array* block = array_get(s->blocks, i);
-    array_delete_all(block);
+    struct block* block = array_get(s->blocks, i);
+    array_free(block->transactions);
   }
   array_free(s->blocks);
 }

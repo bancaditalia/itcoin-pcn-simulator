@@ -69,6 +69,7 @@ from plasma_network_generator.utils import (
 DEFAULT_OUTPUT_DIR = Path("output")
 DEFAULT_RANDOM_SEED: int | None = 42
 DEFAULT_FRACTION_OF_UNBANKED_RETAIL_USERS: float = 0.0
+DEFAULT_SCALE_FREE_2_2: bool = False
 
 
 @dataclasses.dataclass(frozen=True)
@@ -80,6 +81,7 @@ class Args:
     model_params_file: Path
     output_dir: Path
     nb_partitions: Sequence[int]
+    nb_cb: int
     nb_intermediaries: int
     nb_retail: int
     nb_merchants: int
@@ -90,6 +92,7 @@ class Args:
     capacity_fractions: Sequence[float]
     nations: NationSpecs
     seed: int | None = None
+    scale_free_2_2: bool = False
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
@@ -212,6 +215,13 @@ def get_parser() -> argparse.ArgumentParser:
         help="the capacity fractions to use (default: 0.0 0.1 0.2 ... 1.0)",
         nargs="+",
     )
+    parser.add_argument(
+        "-sf",
+        "--scale-free-2-2",
+        type=bool,
+        help=f"force layer 2 subnetwork to be scale free (default: {DEFAULT_SCALE_FREE_2_2})",
+        default=DEFAULT_SCALE_FREE_2_2,
+    )
     return parser
 
 
@@ -234,6 +244,7 @@ def parse_args() -> Args:
         model_params_file=raw_args.model_params_file.resolve(),
         output_dir=raw_args.output_dir.resolve(),
         nb_partitions=tuple(raw_args.nb_partitions),
+        nb_cb=nb_cb,
         nb_intermediaries=nb_intermediaries,
         nb_retail=nb_retail,
         nb_merchants=nb_merchants,
@@ -244,6 +255,7 @@ def parse_args() -> Args:
         capacity_fractions=raw_args.capacity_fractions,
         nations=nations,
         seed=raw_args.seed,
+        scale_free_2_2=raw_args.scale_free_2_2,
     )
 
 
@@ -318,7 +330,7 @@ def _do_job(args: Args) -> None:
     networkx_generator_output_dir = args.output_dir / "generator_output"
     rnd_model = RndModel.initialize_from_cli_args(
         number_of_nodes_in_simulation=None,
-        number_of_CBs_in_simulation=1,
+        number_of_CBs_in_simulation=args.nb_cb,
         number_of_intermediaries_in_simulation=args.nb_intermediaries,
         number_of_retail_users_in_simulation=args.nb_retail,
         number_of_merchants_in_simulation=args.nb_merchants,
@@ -334,6 +346,7 @@ def _do_job(args: Args) -> None:
         p_large_merchants=args.p_large_merchants,
         unique_cb=False,
         nations=args.nations,
+        scale_free_2_2=args.scale_free_2_2,
     )
     logging.info(
         "********** calling networkx generator using model params file %s **********",

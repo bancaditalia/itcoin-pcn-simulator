@@ -154,6 +154,7 @@ def instantiate_plasma_subnetwork(
         ID=subnetwork["ID"],
         Nation=nation_id,
         description=subnetwork["description"],
+        name="_".join([subnetwork["ID"], nation_id]),
     )
 
     # We generate the nodes and attach the proper attributes and labels to each of them
