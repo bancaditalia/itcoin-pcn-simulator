@@ -50,7 +50,7 @@ tw_lptype model_lps[] = {
 st_model_types model_types[] = {
   {
     (ev_trace_f) event_trace,
-    (size_t) sizeof(event_model_data),
+    (size_t) sizeof(struct event_model_data),
     (model_stat_f) NULL,
     (size_t) 0,
     (sample_event_f) NULL,
