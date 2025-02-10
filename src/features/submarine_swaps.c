@@ -12,11 +12,11 @@
 #include "../features/routing.h"
 #include "../features/htlc.h"
 
-void node_delete_swap(struct tw_lp* lp, submarine_swap* swap){
+void node_delete_swap(struct tw_lp* lp, struct submarine_swap* swap){
   struct node* node = lp->cur_state;
   // Search for a submarine swap that was started by this forward event
   for (int i=0; i<array_len(node->submarine_swaps); i++){
-    submarine_swap* swap2 = array_get(node->submarine_swaps, i);
+    struct submarine_swap* swap2 = array_get(node->submarine_swaps, i);
     // Delete if the swap was added
     if (swap2 == swap){ // Here pointer equaility is checked
       if (g_dbg_trace) {
@@ -118,7 +118,7 @@ void submarine_swaps_on_forward_payment(tw_lp *lp, struct message *in_msg){
   // Check if the swap was already started on this channel
   unsigned int submarine_swap_started = 0;
   for (int i=0; i<array_len(node->submarine_swaps); i++){
-    submarine_swap* swap = array_get(node->submarine_swaps, i);
+    struct submarine_swap* swap = array_get(node->submarine_swaps, i);
     if (swap->submarine_sender == submarine_sender && swap->submarine_receiver == submarine_receiver){
       submarine_swap_started=1;
       break;
@@ -138,7 +138,7 @@ void submarine_swaps_on_forward_payment(tw_lp *lp, struct message *in_msg){
 
   // Create swap
   in_msg->swap = malloc(sizeof(struct submarine_swap));
-  submarine_swap* swap = in_msg->swap;
+  struct submarine_swap* swap = in_msg->swap;
   swap->submarine_sender = submarine_sender;
   swap->submarine_receiver = submarine_receiver;
   // Swap amount S = B +P −C/2
@@ -178,7 +178,7 @@ void submarine_swaps_on_forward_payment_rev(tw_lp *lp, struct message *in_msg){
 
 void submarine_swaps_on_swap_request(tw_lp *lp, struct message *in_msg){
   struct node *node = lp->cur_state;
-  submarine_swap* swap = in_msg->swap;
+  struct submarine_swap* swap = in_msg->swap;
 
   // Check requested swap
   if(swap->submarine_receiver != node->id) {
@@ -301,7 +301,7 @@ void submarine_swaps_on_receive_success_rev(tw_lp *lp, struct payment* payment){
   // Do nothing, since the only thing we did was generating the claim HTLC
 }
 
-void serialize_submarine_swap(submarine_swap* swap, char* serialized){
+void serialize_submarine_swap(struct submarine_swap* swap, char* serialized){
   if (!swap || !serialized) {
       return; // Invalid input or insufficient buffer size
   }
@@ -344,8 +344,8 @@ void serialize_submarine_swap(submarine_swap* swap, char* serialized){
   }
 }
 
-submarine_swap* deserialize_submarine_swap(const char* serialized){
-  submarine_swap* swap;
+struct submarine_swap* deserialize_submarine_swap(const char* serialized){
+  struct submarine_swap* swap;
   size_t swap_size = 0;
 
   const char *current_pos = serialized;
