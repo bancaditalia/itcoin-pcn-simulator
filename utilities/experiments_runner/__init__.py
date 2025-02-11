@@ -253,7 +253,6 @@ def run_all_simulations(
     cloth_root_dir: pathlib.Path,
     topologies_dir: pathlib.Path,
     results_dir: pathlib.Path,
-    results_file: pathlib.Path,
     block_congestion_rates: float | list[float],
     block_sizes: int | list[int],
     capacities: float | list[float],
@@ -275,6 +274,7 @@ def run_all_simulations(
     """
     # Read existing experiments
     results = pd.DataFrame()
+    results_file = results_dir / "results.csv"
     if results_file.is_file():
         results = pd.read_csv(results_file)
 

@@ -37,16 +37,13 @@ def setup_topology_directories(dir_name: str, topology_type: TopologyType) -> Pa
     return topologies_dir
 
 
-def setup_result_directories(
-    experiment_nb: int, topology_type: TopologyType
-) -> tuple[Path, Path]:
+def setup_result_directories(experiment_nb: int, topology_type: TopologyType) -> Path:
     """
     Set up and return the necessary result directory paths.
     """
     results_dir = MY_DIR / "results" / f"exp-{experiment_nb}" / topology_type.value
     results_dir.mkdir(parents=True, exist_ok=True)
-    results_file = results_dir / "results.csv"
-    return results_dir, results_file
+    return results_dir
 
 
 def generate_topologies(
@@ -133,12 +130,11 @@ def run_experiment_1() -> None:
     # Experiment 1 (Plot 1...2)
     for topology_type in TopologyType:
         topologies_dir = setup_topology_directories("topologies", topology_type)
-        results_dir, results_file = setup_result_directories(1, topology_type)
+        results_dir = setup_result_directories(1, topology_type)
         results = run_all_simulations(
             cloth_root_dir=REPO_BASEPATH,
             topologies_dir=topologies_dir,
             results_dir=results_dir,
-            results_file=results_file,
             block_congestion_rates=0,
             block_sizes=4,
             capacities=capacities,
@@ -189,12 +185,11 @@ def run_experiment_2() -> None:
     # Experiment 2 (Plot 3)
     for topology_type in TopologyType:
         topologies_dir = setup_topology_directories("topologies", topology_type)
-        results_dir, results_file = setup_result_directories(2, topology_type)
+        results_dir = setup_result_directories(2, topology_type)
         results = run_all_simulations(
             cloth_root_dir=REPO_BASEPATH,
             topologies_dir=topologies_dir,
             results_dir=results_dir,
-            results_file=results_file,
             block_congestion_rates=0,
             block_sizes=4,
             capacities=capacities,
@@ -244,14 +239,13 @@ def run_experiment_3() -> None:
             topologies_dir = setup_topology_directories(
                 f"topologies_exp3_{i}", topology_type
             )
-            results_dir, results_file = setup_result_directories(
+            results_dir = setup_result_directories(
                 3 * 10 ** len(str(i)) + i, topology_type
             )
             results = run_all_simulations(
                 cloth_root_dir=REPO_BASEPATH,
                 topologies_dir=topologies_dir,
                 results_dir=results_dir,
-                results_file=results_file,
                 block_congestion_rates=0,
                 block_sizes=4 * i,
                 capacities=capacities,
