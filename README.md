@@ -135,3 +135,4 @@ To generate network topologies, follow these steps:
 For more advanced examples and simulations, see the following files:
 
 * [DLT24 notebook (no longer supported: available on an earlier version)](https://github.com/bancaditalia/itcoin-pcn-simulator/blob/dlt24-v1/experiments/2024_DLT/DLT24.ipynb)
+* the [COMCOM25 README.md](experiments/2025_COMCOM/README.md), and [COMCOM25 notebook](experiments/2025_COMCOM/COMCOM.ipynb)
