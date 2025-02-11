@@ -53,7 +53,6 @@ To generate network topologies, follow these steps:
 
     ```bash
     cd ~/itcoin-pcn-simulator/utilities
-    poetry env use python3.11
     poetry shell
     PYTHON_KEYRING_BACKEND=keyring.backends.fail.Keyring
     poetry install
@@ -135,4 +134,4 @@ To generate network topologies, follow these steps:
 
 For more advanced examples and simulations, see the following files:
 
-* [DLT24 notebook](experiments/2024_DLT/DLT24.ipynb)
+* [DLT24 notebook (no longer supported: available on an earlier version)](https://github.com/bancaditalia/itcoin-pcn-simulator/blob/dlt24-v1/experiments/2024_DLT/DLT24.ipynb)
