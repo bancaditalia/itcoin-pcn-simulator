@@ -5,9 +5,26 @@ The target topology for the simulator is a [Semi-Hierarchical PCN](https://arxiv
 
 ## Installing requirements
 
-* Python 3.11 (with dev/distutils)
+* Python 3.11 or later (with dev/distutils)
 * Poetry: please, follow the [official installation instructions](https://python-poetry.org/docs/).
-* [openmpi](https://docs.open-mpi.org/en/v5.0.x/installing-open-mpi/quickstart.html)
+* [OpenMPI](https://docs.open-mpi.org/en/v5.0.x/installing-open-mpi/quickstart.html)
+
+  <details>
+  <summary>OpenMPI howto on Fedora (click to open)</summary>
+  If you are running <strong>Fedora</strong> you will need to execute once:
+  
+  ```
+  dnf install openmpi-devel
+  ```
+  
+  Also, **each time you open a new shell** to run the project you will need to
+  activate the openmpi environment, running:
+  ```
+  source /etc/profile.d/modules.sh
+  module load mpi/openmpi-x86_64
+  ```
+  </details>
+
 
 ## Cloning and building the simulator
 
@@ -24,7 +41,7 @@ The target topology for the simulator is a [Semi-Hierarchical PCN](https://arxiv
     cd ~/itcoin-pcn-simulator
     mkdir build
     cd build
-    cmake ..
+    cmake -DCMAKE_BUILD_TYPE=Release ..
     make
     ```
 
