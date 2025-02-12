@@ -6,7 +6,7 @@ The target topology for the simulator is a [Semi-Hierarchical PCN](https://arxiv
 ## Installing requirements
 
 * Python 3.11 or later (with dev/distutils)
-* Poetry: please, follow the [official installation instructions](https://python-poetry.org/docs/).
+* Poetry >= 2.0: please, follow the [official installation instructions](https://python-poetry.org/docs/).
 * [OpenMPI](https://docs.open-mpi.org/en/v5.0.x/installing-open-mpi/quickstart.html)
 
   <details>
@@ -53,7 +53,7 @@ To generate network topologies, follow these steps:
 
     ```bash
     cd ~/itcoin-pcn-simulator/utilities
-    poetry shell
+    eval $(poetry env activate)
     PYTHON_KEYRING_BACKEND=keyring.backends.fail.Keyring
     poetry install
     ```
@@ -62,7 +62,7 @@ To generate network topologies, follow these steps:
 
     ```bash
     cd ~/itcoin-pcn-simulator/utilities
-    poetry shell
+    eval $(poetry env activate)
     mkdir -p ../experiments/workspace/topologies/seed_42
 
     python plasma_network_generator/commands/generate_all.py \
@@ -123,7 +123,7 @@ To generate network topologies, follow these steps:
 
     ```bash
     cd ~/itcoin-pcn-simulator/utilities
-    poetry shell
+    eval $(poetry env activate)
 
     python statistics_analyzer/commands/analyzer.py \
         --input-dir ../"${OUTDIR}" \

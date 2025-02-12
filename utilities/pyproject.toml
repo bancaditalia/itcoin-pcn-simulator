@@ -1,18 +1,16 @@
-[tool.poetry]
+[project]
 name = "python-utils"
 version = "0.1.0"
 description = "Python utils needed to build topologies and analyze simulation results."
 authors = [
-    "Sara Giammusso <sara.giammusso@bancaditalia.it>"
+    {name = "Sara Giammusso",email = "sara.giammusso@bancaditalia.it"},
 ]
 maintainers = [
-    "Sara Giammusso <sara.giammusso@bancaditalia.it>",
-    "Marco Favorito <marco.favorito@bancaditalia.it>",
-    "Antonio Muci <antonio.muci@bancaditalia.it>"
+    {name = "Sara Giammusso", email = "sara.giammusso@bancaditalia.it"},
+    {name = "Marco Favorito", email = "marco.favorito@bancaditalia.it"},
+    {name = "Antonio Muci", email = "antonio.muci@bancaditalia.it"},
 ]
 license = "GPL-3.0-or-later"
-homepage = "https://github.com/bancaditalia/itcoin-pcn-simulator/utilities"
-repository = "https://github.com/bancaditalia/itcoin-pcn-simulator/"
 keywords = ["itcoin", "cloth"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -23,25 +21,29 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering",
 ]
+requires-python = ">=3.11,<4.0"
+
+dependencies = [
+    "matplotlib (>=3.8.0,<4.0.0)",
+    "pandas (>=2.1.2,<3.0.0)",
+    "scipy (>=1.11.3,<2.0.0)",
+    "seaborn (>=0.13.0,<1.0.0)",
+    "jupyter (>=1.0.0,<2.0.0)",
+    "networkx (>=3.3,<4.0.0)",
+    "metis (>=0.2a5,<1.0.0)",
+    "numpy (>=1.26.4,<2.0.0)",
+]
+
+[project.urls]
+homepage = "https://github.com/bancaditalia/itcoin-pcn-simulator/utilities"
+repository = "https://github.com/bancaditalia/itcoin-pcn-simulator/"
+bugtracker = "https://github.com/bancaditalia/itcoin-pcn-simulator/issues"
+
+[tool.poetry]
+requires-poetry = ">=2.0"
 packages = [
     { include = "statistics_analyzer/**/*.py" }
 ]
-
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/bancaditalia/itcoin-pcn-simulator/issues"
-"Pull Requests" = "https://github.com/bancaditalia/itcoin-pcn-simulator/pulls"
-
-
-[tool.poetry.dependencies]
-python = ">=3.11,<4.0"
-matplotlib = "^3.8.0"
-pandas = "^2.1.2"
-scipy = "^1.11.3"
-seaborn = "^0.13.0"
-jupyter = "^1.0.0"
-networkx = "^3.3"
-metis = "^0.2a5"
-numpy = "^1.26.4"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "1.15.0"
